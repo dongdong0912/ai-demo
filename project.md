@@ -1,10 +1,17 @@
 // markdown
 # 项目上下文
+- 学生管理系统，生成简单的学生管理，包括学生的增删改查，先不开发登录
 
 ## 技术栈
 - **后端**: Spring Boot 3.2 + Java 8
-- **前端**: React 18 + TypeScript + Vite
-- **数据库**: MySQL 8.0
+- **前端**: Vue3 + TypeScript + Vite
++ Pinia
++ Vue Router
++ Element Plus
++ Axios
++ UnoCSS / TailwindCSS
++ ESLint + Prettier
+- **数据库**: MySQL 5.*版本
 
 ## 架构模式
 - **后端**: 三层架构（Controller-Service-DAO）
