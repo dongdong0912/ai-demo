@@ -1,9 +1,14 @@
 package com.example.usermanagement.controller;
 
+import com.example.usermanagement.dao.UserDao;
 import com.example.usermanagement.entity.User;
 import com.example.usermanagement.service.UserService;
+import com.example.usermanagement.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -17,9 +22,173 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final UserDao userDao;
+    private final JwtUtil jwtUtil;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public UserController(UserService userService) {
+    @Value("${jwt.header:Authorization}")
+    private String tokenHeader;
+
+    public UserController(UserService userService, UserDao userDao, JwtUtil jwtUtil) {
         this.userService = userService;
+        this.userDao = userDao;
+        this.jwtUtil = jwtUtil;
+    }
+
+    /**
+     * 获取当前用户信息（个人中心）
+     */
+    @GetMapping("/profile")
+    public ResponseEntity<Map<String, Object>> getProfile(@RequestHeader(value = "Authorization", required = false) String token) {
+        try {
+            if (token == null || !token.startsWith("Bearer ")) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", 401);
+                response.put("message", "未登录或Token无效");
+                return ResponseEntity.status(401).body(response);
+            }
+
+            token = token.substring(7);
+            String username = jwtUtil.getUsernameFromToken(token);
+            User user = userDao.findByUsername(username).orElse(null);
+
+            if (user == null) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", 404);
+                response.put("message", "用户不存在");
+                return ResponseEntity.status(404).body(response);
+            }
+
+            // 不返回密码
+            user.setPassword(null);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 200);
+            response.put("message", "success");
+            response.put("data", user);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("获取个人资料失败", e);
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 500);
+            response.put("message", "获取个人资料失败");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    /**
+     * 更新个人资料
+     */
+    @PutMapping("/profile")
+    public ResponseEntity<Map<String, Object>> updateProfile(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestBody Map<String, String> params) {
+        try {
+            if (token == null || !token.startsWith("Bearer ")) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", 401);
+                response.put("message", "未登录或Token无效");
+                return ResponseEntity.status(401).body(response);
+            }
+
+            token = token.substring(7);
+            String username = jwtUtil.getUsernameFromToken(token);
+            User user = userDao.findByUsername(username).orElse(null);
+
+            if (user == null) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", 404);
+                response.put("message", "用户不存在");
+                return ResponseEntity.status(404).body(response);
+            }
+
+            // 更新可选字段
+            if (params.containsKey("email")) {
+                user.setEmail(params.get("email"));
+            }
+            if (params.containsKey("phone")) {
+                user.setPhone(params.get("phone"));
+            }
+            if (params.containsKey("avatar")) {
+                user.setAvatar(params.get("avatar"));
+            }
+
+            user = userDao.save(user);
+            user.setPassword(null);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 200);
+            response.put("message", "更新成功");
+            response.put("data", user);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("更新个人资料失败", e);
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 500);
+            response.put("message", "更新个人资料失败");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    /**
+     * 修改密码
+     */
+    @PutMapping("/password")
+    public ResponseEntity<Map<String, Object>> changePassword(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestBody Map<String, String> params) {
+        try {
+            if (token == null || !token.startsWith("Bearer ")) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", 401);
+                response.put("message", "未登录或Token无效");
+                return ResponseEntity.status(401).body(response);
+            }
+
+            String oldPassword = params.get("oldPassword");
+            String newPassword = params.get("newPassword");
+
+            if (oldPassword == null || newPassword == null || oldPassword.isEmpty() || newPassword.isEmpty()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", 400);
+                response.put("message", "原密码和新密码不能为空");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            token = token.substring(7);
+            String username = jwtUtil.getUsernameFromToken(token);
+            User user = userDao.findByUsername(username).orElse(null);
+
+            if (user == null) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", 404);
+                response.put("message", "用户不存在");
+                return ResponseEntity.status(404).body(response);
+            }
+
+            // 验证原密码
+            if (user.getPassword() != null && !passwordEncoder.matches(oldPassword, user.getPassword())) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", 400);
+                response.put("message", "原密码错误");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // 更新密码
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userDao.save(user);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 200);
+            response.put("message", "密码修改成功");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("修改密码失败", e);
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 500);
+            response.put("message", "修改密码失败");
+            return ResponseEntity.status(500).body(response);
+        }
     }
 
     @GetMapping

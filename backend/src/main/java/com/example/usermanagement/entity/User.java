@@ -36,6 +36,21 @@ public class User {
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
+    @Column(length = 100)
+    private String password;
+
+    @Column(length = 20)
+    private String role = "USER";
+
+    @Column(length = 255)
+    private String avatar;
+
+    @Column(name = "last_login_time")
+    private LocalDateTime lastLoginTime;
+
+    @Column(name = "login_count")
+    private Integer loginCount = 0;
+
     @PrePersist
     protected void onCreate() {
         createTime = LocalDateTime.now();

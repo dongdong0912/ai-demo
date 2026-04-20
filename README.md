@@ -1,6 +1,6 @@
-# 用户管理系统
+# 教学管理系统
 
-基于 Spring Boot + React 的用户管理前后端分离项目
+基于 Spring Boot + React 的教学管理前后端分离项目
 
 ## 技术栈
 
@@ -14,7 +14,8 @@
 ### 前端
 - React 18
 - TypeScript
-- Vite
+- Vite 4.x
+- React Router 6 (路由导航)
 - Ant Design 5 (Element UI 风格)
 - Axios
 
@@ -27,13 +28,17 @@ ai-demo/
 │   └── src/main/java/com/example/usermanagement/
 │       ├── UserManagementApplication.java
 │       ├── controller/
-│       │   └── UserController.java
+│       │   ├── UserController.java
+│       │   └── TeacherController.java
 │       ├── service/
-│       │   └── UserService.java
+│       │   ├── UserService.java
+│       │   └── TeacherService.java
 │       ├── dao/
-│       │   └── UserDao.java
+│       │   ├── UserDao.java
+│       │   └── TeacherDao.java
 │       └── entity/
-│           └── User.java
+│           ├── User.java
+│           └── Teacher.java
 ├── frontend/                   # 前端项目
 │   ├── package.json
 │   ├── vite.config.ts
@@ -41,14 +46,33 @@ ai-demo/
 │       ├── App.tsx
 │       ├── main.tsx
 │       ├── api/
-│       │   └── user.ts
+│       │   ├── user.ts
+│       │   └── teacher.ts
 │       ├── components/
-│       │   └── UserModal.tsx
+│       │   ├── MainLayout.tsx
+│       │   └── SideMenu.tsx
+│       ├── pages/
+│       │   ├── UserManagement.tsx
+│       │   └── TeacherManagement.tsx
 │       └── types/
-│           └── user.ts
+│           ├── user.ts
+│           └── teacher.ts
 ├── project.md                  # 项目规范文档
 └── SPEC.md                     # 功能规格文档
 ```
+
+## 功能模块
+
+### 当前模块
+- **用户管理**：用户列表、新增、编辑、删除
+- **老师管理**：老师列表、新增、编辑、删除
+
+### 未来可扩展模块
+- 学生管理
+- 课程管理
+- 班级管理
+- 成绩管理
+- ...
 
 ## 快速启动
 
@@ -59,7 +83,6 @@ ai-demo/
 
 ### 后端启动
 
-启动后端（使用 H2 内存数据库，无需安装）：
 ```bash
 cd backend
 mvn spring-boot:run
@@ -79,10 +102,20 @@ npm run dev
 
 ## API 接口
 
-| 方法   | 路径          | 描述     |
-|--------|---------------|----------|
-| GET    | /api/users    | 获取用户列表 |
-| GET    | /api/users/{id} | 获取单个用户 |
-| POST   | /api/users    | 创建用户   |
-| PUT    | /api/users/{id} | 更新用户   |
-| DELETE | /api/users/{id} | 删除用户   |
+### 用户接口
+| 方法   | 路径              | 描述       |
+|--------|-------------------|------------|
+| GET    | /api/users        | 获取用户列表 |
+| GET    | /api/users/{id}   | 获取单个用户 |
+| POST   | /api/users        | 创建用户   |
+| PUT    | /api/users/{id}   | 更新用户   |
+| DELETE | /api/users/{id}   | 删除用户   |
+
+### 老师接口
+| 方法   | 路径                | 描述         |
+|--------|---------------------|--------------|
+| GET    | /api/teachers       | 获取老师列表   |
+| GET    | /api/teachers/{id}  | 获取单个老师   |
+| POST   | /api/teachers       | 创建老师     |
+| PUT    | /api/teachers/{id}  | 更新老师     |
+| DELETE | /api/teachers/{id}  | 删除老师     |

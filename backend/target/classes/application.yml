@@ -3,14 +3,19 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2:mem:userdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+    # MySQL 8.x 配置 (请修改为你的数据库连接信息)
+    url: jdbc:mysql://localhost:3306/teaching_management?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: xd5361055
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 连接池配置
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 30000
+      pool-name: TeachingManagementHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,4 +23,22 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.H2Dialect
+        # MySQL 8.x 使用 MySQL8Dialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    # 自动创建表（首次运行后建议改为 none）
+    # ddl-auto: update  # 启动时自动更新表结构
+    # ddl-auto: none    # 禁止自动修改表结构
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 10MB
+
+file:
+  upload:
+    path: uploads
+    base-url: http://localhost:8080/uploads
+
+jwt:
+  secret: tms_secret_key_2026_for_jwt_token_generation_must_be_long_enough_32chars
+  expiration: 86400000  # 24小时，单位毫秒
