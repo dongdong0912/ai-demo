@@ -422,3 +422,39 @@
 2026-04-20 14:16:10.644 [http-nio-8080-exec-4] INFO  c.example.usermanagement.controller.UserController - 原密码验证结果: false
 2026-04-20 14:16:10.644 [http-nio-8080-exec-4] WARN  c.example.usermanagement.controller.UserController - 原密码错误
 2026-04-20 14:19:59.690 [TeachingManagementHikariCP housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - TeachingManagementHikariCP - Retrograde clock change detected (housekeeper delta=29s845ms), soft-evicting connections from pool.
+2026-04-20 14:45:40.679 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2026-04-20 14:45:40.772 [main] INFO  c.example.usermanagement.UserManagementApplication - Starting UserManagementApplication using Java 1.8.0_421 on xuedongdeMacBook-Pro.local with PID 92990 (/Users/xuedong/CodeBuddy/ai-demo/backend/target/classes started by xuedong in /Users/xuedong/CodeBuddy/ai-demo/backend)
+2026-04-20 14:45:40.773 [main] DEBUG c.example.usermanagement.UserManagementApplication - Running with Spring Boot v2.7.18, Spring v5.3.31
+2026-04-20 14:45:40.774 [main] INFO  c.example.usermanagement.UserManagementApplication - No active profile set, falling back to 1 default profile: "default"
+2026-04-20 14:45:43.556 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-20 14:45:43.720 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 134 ms. Found 2 JPA repository interfaces.
+2026-04-20 14:45:45.175 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-04-20 14:45:45.190 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-04-20 14:45:45.192 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-20 14:45:45.192 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-04-20 14:45:45.525 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-04-20 14:45:45.525 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4583 ms
+2026-04-20 14:45:45.688 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-04-20 14:45:45.756 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.15.Final
+2026-04-20 14:45:45.965 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2026-04-20 14:45:46.138 [main] INFO  com.zaxxer.hikari.HikariDataSource - TeachingManagementHikariCP - Starting...
+2026-04-20 14:45:47.685 [main] INFO  com.zaxxer.hikari.HikariDataSource - TeachingManagementHikariCP - Start completed.
+2026-04-20 14:45:47.708 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2026-04-20 14:45:49.180 [main] INFO  o.h.e.t.jta.platform.internal.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2026-04-20 14:45:49.201 [main] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-20 14:45:50.078 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-20 14:45:50.981 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-04-20 14:45:51.015 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2026-04-20 14:45:51.028 [main] INFO  c.example.usermanagement.UserManagementApplication - Started UserManagementApplication in 12.435 seconds (JVM running for 14.987)
+2026-04-20 14:45:51.228 [main] INFO  com.example.usermanagement.config.DataInitializer - 数据库中已有 3 条用户数据，跳过账号初始化
+2026-04-20 14:45:51.243 [main] INFO  com.example.usermanagement.config.DataInitializer - 数据库中已有 99 条老师数据，跳过老师数据初始化
+2026-04-20 14:45:51.244 [main] INFO  c.example.usermanagement.UserManagementApplication - 用户管理系统启动成功!
+2026-04-20 14:45:54.510 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-20 14:45:54.511 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-04-20 14:45:54.512 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-04-20 14:45:56.618 [http-nio-8080-exec-4] DEBUG c.example.usermanagement.controller.UserController - 获取所有用户列表
+2026-04-20 14:45:56.628 [http-nio-8080-exec-4] DEBUG com.example.usermanagement.service.UserService - Service: 查询所有用户
+2026-04-20 14:45:56.647 [http-nio-8080-exec-4] INFO  c.example.usermanagement.controller.UserController - 成功获取用户列表, 共 3 条数据
+2026-04-20 14:45:56.708 [http-nio-8080-exec-5] DEBUG c.example.usermanagement.controller.UserController - 获取所有用户列表
+2026-04-20 14:45:56.709 [http-nio-8080-exec-5] DEBUG com.example.usermanagement.service.UserService - Service: 查询所有用户
+2026-04-20 14:45:56.805 [http-nio-8080-exec-5] INFO  c.example.usermanagement.controller.UserController - 成功获取用户列表, 共 3 条数据
