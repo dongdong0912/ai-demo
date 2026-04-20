@@ -85,8 +85,8 @@ const Profile: React.FC = () => {
       setPasswordModalVisible(false);
       passwordForm.resetFields();
     } catch (error: unknown) {
-      const err = error as { message?: string };
-      message.error(err.message || '修改失败');
+      // 错误已由 request 拦截器处理，这里不再重复提示
+      console.error('修改密码失败:', error);
     }
   };
 

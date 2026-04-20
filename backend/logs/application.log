@@ -313,3 +313,112 @@
 2026-04-20 14:01:45.137 [http-nio-8080-exec-5] DEBUG c.example.usermanagement.controller.UserController - 获取所有用户列表
 2026-04-20 14:01:45.137 [http-nio-8080-exec-5] DEBUG com.example.usermanagement.service.UserService - Service: 查询所有用户
 2026-04-20 14:01:45.153 [http-nio-8080-exec-5] INFO  c.example.usermanagement.controller.UserController - 成功获取用户列表, 共 3 条数据
+2026-04-20 14:08:13.290 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2026-04-20 14:08:13.572 [main] INFO  c.example.usermanagement.UserManagementApplication - Starting UserManagementApplication using Java 1.8.0_421 on xuedongdeMacBook-Pro.local with PID 86808 (/Users/xuedong/CodeBuddy/ai-demo/backend/target/classes started by xuedong in /Users/xuedong/CodeBuddy/ai-demo/backend)
+2026-04-20 14:08:13.574 [main] DEBUG c.example.usermanagement.UserManagementApplication - Running with Spring Boot v2.7.18, Spring v5.3.31
+2026-04-20 14:08:13.576 [main] INFO  c.example.usermanagement.UserManagementApplication - No active profile set, falling back to 1 default profile: "default"
+2026-04-20 14:08:19.217 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-20 14:08:19.538 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 264 ms. Found 2 JPA repository interfaces.
+2026-04-20 14:08:21.359 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-04-20 14:08:21.367 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-04-20 14:08:21.369 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-20 14:08:21.369 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-04-20 14:08:21.838 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-04-20 14:08:21.840 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 8001 ms
+2026-04-20 14:08:22.255 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-04-20 14:08:22.364 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.15.Final
+2026-04-20 14:08:22.771 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2026-04-20 14:08:23.026 [main] INFO  com.zaxxer.hikari.HikariDataSource - TeachingManagementHikariCP - Starting...
+2026-04-20 14:08:24.333 [main] INFO  com.zaxxer.hikari.HikariDataSource - TeachingManagementHikariCP - Start completed.
+2026-04-20 14:08:24.354 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2026-04-20 14:08:26.911 [main] INFO  o.h.e.t.jta.platform.internal.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2026-04-20 14:08:27.018 [main] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-20 14:08:29.450 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-20 14:08:30.221 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-04-20 14:08:30.256 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2026-04-20 14:08:30.269 [main] INFO  c.example.usermanagement.UserManagementApplication - Started UserManagementApplication in 21.747 seconds (JVM running for 24.315)
+2026-04-20 14:08:30.538 [main] INFO  com.example.usermanagement.config.DataInitializer - 数据库中已有 3 条用户数据，跳过账号初始化
+2026-04-20 14:08:30.554 [main] INFO  com.example.usermanagement.config.DataInitializer - 数据库中已有 99 条老师数据，跳过老师数据初始化
+2026-04-20 14:08:30.555 [main] INFO  c.example.usermanagement.UserManagementApplication - 用户管理系统启动成功!
+2026-04-20 14:08:38.272 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-20 14:08:38.272 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-04-20 14:08:38.273 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-04-20 14:08:58.117 [http-nio-8080-exec-3] INFO  c.example.usermanagement.controller.UserController - 收到修改密码请求
+2026-04-20 14:08:58.118 [http-nio-8080-exec-3] INFO  c.example.usermanagement.controller.UserController - oldPassword: ***, newPassword: ***
+2026-04-20 14:08:58.119 [http-nio-8080-exec-3] INFO  c.example.usermanagement.controller.UserController - 从Token解析的用户名: admin
+2026-04-20 14:08:58.124 [http-nio-8080-exec-3] INFO  c.example.usermanagement.controller.UserController - 用户密码状态: 已设置
+2026-04-20 14:08:58.222 [http-nio-8080-exec-3] INFO  c.example.usermanagement.controller.UserController - 原密码验证结果: false
+2026-04-20 14:08:58.222 [http-nio-8080-exec-3] WARN  c.example.usermanagement.controller.UserController - 原密码错误，用户名: admin
+2026-04-20 14:09:03.422 [http-nio-8080-exec-4] INFO  c.example.usermanagement.controller.UserController - 收到修改密码请求
+2026-04-20 14:09:03.422 [http-nio-8080-exec-4] INFO  c.example.usermanagement.controller.UserController - oldPassword: ***, newPassword: ***
+2026-04-20 14:09:03.429 [http-nio-8080-exec-4] INFO  c.example.usermanagement.controller.UserController - 从Token解析的用户名: admin
+2026-04-20 14:09:03.434 [http-nio-8080-exec-4] INFO  c.example.usermanagement.controller.UserController - 用户密码状态: 已设置
+2026-04-20 14:09:03.621 [http-nio-8080-exec-4] INFO  c.example.usermanagement.controller.UserController - 原密码验证结果: false
+2026-04-20 14:09:03.622 [http-nio-8080-exec-4] WARN  c.example.usermanagement.controller.UserController - 原密码错误，用户名: admin
+2026-04-20 14:12:22.137 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 6.2.5.Final
+2026-04-20 14:12:22.298 [main] INFO  c.example.usermanagement.UserManagementApplication - Starting UserManagementApplication using Java 1.8.0_421 on xuedongdeMacBook-Pro.local with PID 87552 (/Users/xuedong/CodeBuddy/ai-demo/backend/target/classes started by xuedong in /Users/xuedong/CodeBuddy/ai-demo/backend)
+2026-04-20 14:12:22.299 [main] DEBUG c.example.usermanagement.UserManagementApplication - Running with Spring Boot v2.7.18, Spring v5.3.31
+2026-04-20 14:12:22.300 [main] INFO  c.example.usermanagement.UserManagementApplication - No active profile set, falling back to 1 default profile: "default"
+2026-04-20 14:12:24.434 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-20 14:12:24.508 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 59 ms. Found 2 JPA repository interfaces.
+2026-04-20 14:12:25.199 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-04-20 14:12:25.212 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-04-20 14:12:25.214 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-20 14:12:25.214 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-04-20 14:12:26.622 [main] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-04-20 14:12:26.622 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4229 ms
+2026-04-20 14:12:26.925 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-04-20 14:12:27.272 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.15.Final
+2026-04-20 14:12:28.349 [main] INFO  org.hibernate.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2026-04-20 14:12:28.862 [main] INFO  com.zaxxer.hikari.HikariDataSource - TeachingManagementHikariCP - Starting...
+2026-04-20 14:12:29.597 [main] INFO  com.zaxxer.hikari.HikariDataSource - TeachingManagementHikariCP - Start completed.
+2026-04-20 14:12:29.651 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2026-04-20 14:12:32.093 [main] INFO  o.h.e.t.jta.platform.internal.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2026-04-20 14:12:32.107 [main] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-20 14:12:32.737 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-20 14:12:33.575 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-04-20 14:12:33.613 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2026-04-20 14:12:33.626 [main] INFO  c.example.usermanagement.UserManagementApplication - Started UserManagementApplication in 14.825 seconds (JVM running for 16.743)
+2026-04-20 14:12:33.840 [main] INFO  com.example.usermanagement.config.DataInitializer - 数据库中已有 3 条用户数据，跳过账号初始化
+2026-04-20 14:12:33.857 [main] INFO  com.example.usermanagement.config.DataInitializer - 数据库中已有 99 条老师数据，跳过老师数据初始化
+2026-04-20 14:12:33.858 [main] INFO  c.example.usermanagement.UserManagementApplication - 用户管理系统启动成功!
+2026-04-20 14:12:36.270 [http-nio-8080-exec-1] INFO  o.a.c.core.ContainerBase.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-20 14:12:36.271 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-04-20 14:12:36.273 [http-nio-8080-exec-1] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-04-20 14:12:51.953 [http-nio-8080-exec-3] INFO  c.example.usermanagement.controller.UserController - 收到修改密码请求, params: {oldPassword=1, newPassword=111111}
+2026-04-20 14:12:51.953 [http-nio-8080-exec-3] INFO  c.example.usermanagement.controller.UserController - oldPassword: [1], newPassword: [111111]
+2026-04-20 14:12:51.955 [http-nio-8080-exec-3] INFO  c.example.usermanagement.controller.UserController - Token 解析成功，用户名: admin
+2026-04-20 14:12:51.959 [http-nio-8080-exec-3] INFO  c.example.usermanagement.controller.UserController - 数据库存储的密码状态: 已加密($2a$10$Fh/...)
+2026-04-20 14:12:52.073 [http-nio-8080-exec-3] INFO  c.example.usermanagement.controller.UserController - 原密码验证结果: false
+2026-04-20 14:12:52.073 [http-nio-8080-exec-3] WARN  c.example.usermanagement.controller.UserController - 原密码错误
+2026-04-20 14:13:33.264 [http-nio-8080-exec-5] DEBUG c.example.usermanagement.controller.UserController - 获取所有用户列表
+2026-04-20 14:13:33.271 [http-nio-8080-exec-5] DEBUG com.example.usermanagement.service.UserService - Service: 查询所有用户
+2026-04-20 14:13:33.288 [http-nio-8080-exec-5] INFO  c.example.usermanagement.controller.UserController - 成功获取用户列表, 共 3 条数据
+2026-04-20 14:13:33.297 [http-nio-8080-exec-6] DEBUG c.example.usermanagement.controller.UserController - 获取所有用户列表
+2026-04-20 14:13:33.298 [http-nio-8080-exec-6] DEBUG com.example.usermanagement.service.UserService - Service: 查询所有用户
+2026-04-20 14:13:33.313 [http-nio-8080-exec-6] INFO  c.example.usermanagement.controller.UserController - 成功获取用户列表, 共 3 条数据
+2026-04-20 14:14:19.025 [http-nio-8080-exec-9] INFO  c.example.usermanagement.controller.UserController - 收到修改密码请求, params: {oldPassword=123456, newPassword=1234567}
+2026-04-20 14:14:19.026 [http-nio-8080-exec-9] INFO  c.example.usermanagement.controller.UserController - oldPassword: [123456], newPassword: [1234567]
+2026-04-20 14:14:19.029 [http-nio-8080-exec-9] INFO  c.example.usermanagement.controller.UserController - Token 解析成功，用户名: admin
+2026-04-20 14:14:19.041 [http-nio-8080-exec-9] INFO  c.example.usermanagement.controller.UserController - 数据库存储的密码状态: 已加密($2a$10$Fh/...)
+2026-04-20 14:14:19.175 [http-nio-8080-exec-9] INFO  c.example.usermanagement.controller.UserController - 原密码验证结果: true
+2026-04-20 14:14:19.367 [http-nio-8080-exec-9] INFO  c.example.usermanagement.controller.UserController - 密码修改成功
+2026-04-20 14:14:51.173 [http-nio-8080-exec-10] INFO  c.example.usermanagement.controller.UserController - 收到修改密码请求, params: {oldPassword=12345, newPassword=12345678}
+2026-04-20 14:14:51.173 [http-nio-8080-exec-10] INFO  c.example.usermanagement.controller.UserController - oldPassword: [12345], newPassword: [12345678]
+2026-04-20 14:14:51.175 [http-nio-8080-exec-10] INFO  c.example.usermanagement.controller.UserController - Token 解析成功，用户名: admin
+2026-04-20 14:14:51.194 [http-nio-8080-exec-10] INFO  c.example.usermanagement.controller.UserController - 数据库存储的密码状态: 已加密($2a$10$Upx...)
+2026-04-20 14:14:51.309 [http-nio-8080-exec-10] INFO  c.example.usermanagement.controller.UserController - 原密码验证结果: false
+2026-04-20 14:14:51.310 [http-nio-8080-exec-10] WARN  c.example.usermanagement.controller.UserController - 原密码错误
+2026-04-20 14:14:58.710 [http-nio-8080-exec-1] INFO  c.example.usermanagement.controller.UserController - 收到修改密码请求, params: {oldPassword=12345, newPassword=12345678}
+2026-04-20 14:14:58.710 [http-nio-8080-exec-1] INFO  c.example.usermanagement.controller.UserController - oldPassword: [12345], newPassword: [12345678]
+2026-04-20 14:14:58.713 [http-nio-8080-exec-1] INFO  c.example.usermanagement.controller.UserController - Token 解析成功，用户名: admin
+2026-04-20 14:14:58.720 [http-nio-8080-exec-1] INFO  c.example.usermanagement.controller.UserController - 数据库存储的密码状态: 已加密($2a$10$Upx...)
+2026-04-20 14:14:58.828 [http-nio-8080-exec-1] INFO  c.example.usermanagement.controller.UserController - 原密码验证结果: false
+2026-04-20 14:14:58.828 [http-nio-8080-exec-1] WARN  c.example.usermanagement.controller.UserController - 原密码错误
+2026-04-20 14:16:10.028 [http-nio-8080-exec-4] INFO  c.example.usermanagement.controller.UserController - 收到修改密码请求, params: {oldPassword=12345, newPassword=12345678}
+2026-04-20 14:16:10.029 [http-nio-8080-exec-4] INFO  c.example.usermanagement.controller.UserController - oldPassword: [12345], newPassword: [12345678]
+2026-04-20 14:16:10.034 [http-nio-8080-exec-4] INFO  c.example.usermanagement.controller.UserController - Token 解析成功，用户名: admin
+2026-04-20 14:16:10.048 [http-nio-8080-exec-4] INFO  c.example.usermanagement.controller.UserController - 数据库存储的密码状态: 已加密($2a$10$Upx...)
+2026-04-20 14:16:10.644 [http-nio-8080-exec-4] INFO  c.example.usermanagement.controller.UserController - 原密码验证结果: false
+2026-04-20 14:16:10.644 [http-nio-8080-exec-4] WARN  c.example.usermanagement.controller.UserController - 原密码错误
+2026-04-20 14:19:59.690 [TeachingManagementHikariCP housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - TeachingManagementHikariCP - Retrograde clock change detected (housekeeper delta=29s845ms), soft-evicting connections from pool.

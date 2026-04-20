@@ -136,57 +136,88 @@ public class UserController {
     @PutMapping("/password")
     public ResponseEntity<Map<String, Object>> changePassword(
             @RequestHeader(value = "Authorization", required = false) String token,
-            @RequestBody Map<String, String> params) {
+            @RequestBody Map<String, Object> params) {
+        log.info("收到修改密码请求, params: {}", params);
         try {
             if (token == null || !token.startsWith("Bearer ")) {
+                log.warn("Token 为空或格式错误");
                 Map<String, Object> response = new HashMap<>();
                 response.put("code", 401);
                 response.put("message", "未登录或Token无效");
                 return ResponseEntity.status(401).body(response);
             }
 
-            String oldPassword = params.get("oldPassword");
-            String newPassword = params.get("newPassword");
+            // 强制转换为字符串类型
+            String oldPassword = String.valueOf(params.get("oldPassword"));
+            String newPassword = String.valueOf(params.get("newPassword"));
 
-            if (oldPassword == null || newPassword == null || oldPassword.isEmpty() || newPassword.isEmpty()) {
+            log.info("oldPassword: [{}], newPassword: [{}]", oldPassword, newPassword);
+
+            // 处理 null 字符串的情况
+            if ("null".equals(oldPassword) || "null".equals(newPassword) ||
+                oldPassword.isEmpty() || newPassword.isEmpty()) {
+                log.warn("密码参数为空");
                 Map<String, Object> response = new HashMap<>();
                 response.put("code", 400);
                 response.put("message", "原密码和新密码不能为空");
                 return ResponseEntity.badRequest().body(response);
             }
 
-            token = token.substring(7);
-            String username = jwtUtil.getUsernameFromToken(token);
+            String actualToken = token.substring(7);
+            String username = jwtUtil.getUsernameFromToken(actualToken);
+            log.info("Token 解析成功，用户名: {}", username);
+
             User user = userDao.findByUsername(username).orElse(null);
 
             if (user == null) {
+                log.warn("用户不存在: {}", username);
                 Map<String, Object> response = new HashMap<>();
                 response.put("code", 404);
                 response.put("message", "用户不存在");
                 return ResponseEntity.status(404).body(response);
             }
 
+            String storedPassword = user.getPassword();
+            log.info("数据库存储的密码状态: {}", storedPassword == null ? "NULL" : "已加密(" + storedPassword.substring(0, Math.min(10, storedPassword.length())) + "...)");
+
+            // 如果数据库密码为空（从未设置过），直接设置新密码
+            if (storedPassword == null || storedPassword.isEmpty()) {
+                log.info("用户密码为空，直接设置新密码");
+                user.setPassword(passwordEncoder.encode(newPassword));
+                userDao.save(user);
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", 200);
+                response.put("message", "密码设置成功");
+                return ResponseEntity.ok(response);
+            }
+
             // 验证原密码
-            if (user.getPassword() != null && !passwordEncoder.matches(oldPassword, user.getPassword())) {
+            boolean matches = passwordEncoder.matches(oldPassword, storedPassword);
+            log.info("原密码验证结果: {}", matches);
+
+            if (!matches) {
+                log.warn("原密码错误");
                 Map<String, Object> response = new HashMap<>();
                 response.put("code", 400);
-                response.put("message", "原密码错误");
+                response.put("message", "原密码错误，请输入正确的原密码");
                 return ResponseEntity.badRequest().body(response);
             }
 
             // 更新密码
             user.setPassword(passwordEncoder.encode(newPassword));
             userDao.save(user);
+            log.info("密码修改成功");
 
             Map<String, Object> response = new HashMap<>();
             response.put("code", 200);
             response.put("message", "密码修改成功");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.error("修改密码失败", e);
+            log.error("修改密码失败: ", e);
             Map<String, Object> response = new HashMap<>();
             response.put("code", 500);
-            response.put("message", "修改密码失败");
+            response.put("message", "修改密码失败: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }
@@ -204,23 +235,32 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getUserById(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getUserById(@PathVariable String id) {
         log.debug("根据ID获取用户: {}", id);
-        return userService.getUserById(id)
-                .map(user -> {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("code", 200);
-                    response.put("message", "success");
-                    response.put("data", user);
-                    return ResponseEntity.ok(response);
-                })
-                .orElseGet(() -> {
-                    log.warn("用户不存在, ID: {}", id);
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("code", 404);
-                    response.put("message", "用户不存在");
-                    return ResponseEntity.status(404).body(response);
-                });
+        try {
+            Long userId = Long.parseLong(id);
+            return userService.getUserById(userId)
+                    .map(user -> {
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("code", 200);
+                        response.put("message", "success");
+                        response.put("data", user);
+                        return ResponseEntity.ok(response);
+                    })
+                    .orElseGet(() -> {
+                        log.warn("用户不存在, ID: {}", id);
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("code", 404);
+                        response.put("message", "用户不存在");
+                        return ResponseEntity.status(404).body(response);
+                    });
+        } catch (NumberFormatException e) {
+            log.warn("用户ID格式错误: {}", id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 400);
+            response.put("message", "用户ID无效");
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
     @PostMapping
@@ -244,16 +284,24 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updateUser(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<Map<String, Object>> updateUser(@PathVariable String id, @RequestBody User user) {
         log.info("更新用户, ID: {}", id);
         try {
-            User updatedUser = userService.updateUser(id, user);
-            log.info("用户更新成功, ID: {}", id);
+            // 验证 id 必须是数字
+            Long userId = Long.parseLong(id);
+            User updatedUser = userService.updateUser(userId, user);
+            log.info("用户更新成功, ID: {}", userId);
             Map<String, Object> response = new HashMap<>();
             response.put("code", 200);
             response.put("message", "更新成功");
             response.put("data", updatedUser);
             return ResponseEntity.ok(response);
+        } catch (NumberFormatException e) {
+            log.warn("用户ID格式错误: {}", id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 400);
+            response.put("message", "用户ID无效");
+            return ResponseEntity.badRequest().body(response);
         } catch (IllegalArgumentException e) {
             log.warn("用户更新失败: {}", e.getMessage());
             Map<String, Object> response = new HashMap<>();
