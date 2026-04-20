@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
-import { UserOutlined, TeamOutlined, BookOutlined, ReadOutlined, ProfileOutlined } from '@ant-design/icons';
+import { UserOutlined, TeamOutlined, BookOutlined, ReadOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const { Sider } = Layout;
@@ -16,11 +16,6 @@ const menuItems = [
     key: '/teachers',
     icon: <TeamOutlined />,
     label: '老师管理',
-  },
-  {
-    key: '/profile',
-    icon: <ProfileOutlined />,
-    label: '个人中心',
   },
   {
     key: '/courses',

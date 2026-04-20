@@ -24,6 +24,7 @@ const MainLayout: React.FC = () => {
       '/teachers': '老师管理',
       '/courses': '课程管理',
       '/students': '学生管理',
+      '/profile': '个人中心',
     };
     return pathMap[location.pathname] || '首页';
   };
@@ -34,11 +35,13 @@ const MainLayout: React.FC = () => {
       key: 'profile',
       icon: <UserOutlined />,
       label: '个人中心',
+      onClick: () => navigate('/profile'),
     },
     {
       key: 'settings',
       icon: <SettingOutlined />,
       label: '系统设置',
+      disabled: true, // 预留功能
     },
     {
       type: 'divider' as const,

@@ -13,6 +13,7 @@ import {
   Row,
   Col,
 } from 'antd';
+import './Profile.css';
 import {
   UserOutlined,
   EditOutlined,
