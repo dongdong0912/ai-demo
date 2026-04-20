@@ -4,9 +4,11 @@
 
 | 层级 | 技术 |
 |------|------|
-| 后端 | Spring Boot 2.7 + JPA + MySQL |
+| 后端 | Spring Boot 2.7 + JPA + MySQL 8.x |
 | 前端 | React + Ant Design + React Router + Vite |
-| 认证 | JWT（自定义拦截器，无 Spring Security） |
+| 数据库 | MySQL 8.x |
+| 认证 | JWT（自定义拦截器） |
+| 连接池 | HikariCP |
 | 构建 | Maven (后端) + npm (前端) |
 
 ---
@@ -105,6 +107,16 @@
 | PUT | /api/teachers/{id} | 更新教师 | 是 |
 | DELETE | /api/teachers/{id} | 删除教师 | 是 |
 
+### 文件上传接口
+| 方法 | 路径 | 说明 | 认证 |
+|------|------|------|------|
+| POST | /api/upload/image | 上传图片 | 是 |
+
+**上传说明**：
+- 支持格式：JPG, PNG, GIF, WEBP
+- 文件大小限制：5MB
+- 返回文件访问 URL
+
 ### API 响应格式
 ```json
 {
@@ -159,7 +171,8 @@ backend/src/main/java/com/example/usermanagement/
 ├── controller/
 │   ├── AuthController.java            # 认证控制器
 │   ├── UserController.java            # 用户控制器(含个人中心)
-│   └── TeacherController.java          # 教师控制器
+│   ├── TeacherController.java          # 教师控制器
+│   └── FileController.java            # 文件上传控制器
 ├── dao/
 │   ├── UserDao.java
 │   └── TeacherDao.java

@@ -11,7 +11,8 @@
 ### 后端
 - **框架**: Spring Boot 2.7
 - **ORM**: Spring Data JPA
-- **数据库**: MySQL
+- **数据库**: MySQL 8.x
+- **连接池**: HikariCP
 - **认证**: JWT (jjwt)
 - **安全**: Spring Security (仅用于密码加密 BCrypt)
 - **构建**: Maven
@@ -163,13 +164,26 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/teaching_system
+    url: jdbc:mysql://localhost:3306/teaching_management?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
     password: your_password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
 
 jwt:
-  secret: your_jwt_secret_key
-  expiration: 86400000
+  secret: your_jwt_secret_key_must_be_at_least_32_characters
+  expiration: 86400000  # 24小时
+```
+
+**注意**: 使用前需先创建数据库 `teaching_management`:
+```sql
+CREATE DATABASE teaching_management CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 **前端** (`vite.config.ts`)
