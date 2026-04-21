@@ -8,6 +8,9 @@ const collapsed = ref(false)
 const handleCollapse = (isCollapsed: boolean) => {
   collapsed.value = isCollapsed
 }
+
+const version = 'v1.0.0'
+const year = new Date().getFullYear()
 </script>
 
 <template>
@@ -24,6 +27,16 @@ const handleCollapse = (isCollapsed: boolean) => {
       <main class="page-content">
         <router-view />
       </main>
+
+      <footer class="footer">
+        <div class="footer-content">
+          <span class="copyright">© {{ year }} 用户管理系统</span>
+          <span class="divider">|</span>
+          <span class="version">版本 {{ version }}</span>
+          <span class="divider">|</span>
+          <span class="author">Developed by CodeBuddy</span>
+        </div>
+      </footer>
     </div>
   </div>
 </template>
@@ -67,5 +80,41 @@ const handleCollapse = (isCollapsed: boolean) => {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
+}
+
+.footer {
+  height: 40px;
+  flex-shrink: 0;
+  background: #fff;
+  border-top: 1px solid #ebeef5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #909399;
+}
+
+.copyright {
+  color: #606266;
+  font-weight: 500;
+}
+
+.divider {
+  color: #dcdfe6;
+}
+
+.version {
+  color: #667eea;
+  font-weight: 500;
+}
+
+.author {
+  color: #c0c4cc;
 }
 </style>

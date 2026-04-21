@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Refresh, Search, CircleClose } from '@element-plus/icons-vue'
+import { Plus, Refresh, Search, CircleClose, Edit, Delete, User, Male, Female, Phone, Message, Reading, Document } from '@element-plus/icons-vue'
 import { teacherApi } from '@/api/teacher'
 import type { Teacher } from '@/types'
 
@@ -83,23 +83,24 @@ onMounted(() => fetchTeachers())
 
 <template>
   <div class="page-container">
-    <div class="toolbar">
-      <div class="toolbar-left">
+    <div class="action-bar">
+      <div class="left-actions">
         <el-input v-model="searchKeyword" placeholder="按姓名或手机号搜索..." clearable class="search-input" @input="handleSearch" @keyup.enter="handleSearch">
-          <template #prefix><el-icon><Search /></el-icon></template>
+          <template #append>
+            <el-button @click="handleSearch"><el-icon><Search /></el-icon></el-button>
+          </template>
         </el-input>
-        <el-button type="primary" @click="handleSearch">搜索</el-button>
+        <el-button class="refresh-btn" @click="handleRefresh"><el-icon><Refresh /></el-icon></el-button>
       </div>
-      <div class="toolbar-right">
-        <el-button @click="handleRefresh"><el-icon><Refresh /></el-icon>刷新</el-button>
-        <el-button type="primary" @click="openAddDialog"><el-icon><Plus /></el-icon>添加</el-button>
+      <div class="right-actions">
+        <el-button type="primary" class="add-btn" @click="openAddDialog"><el-icon><Plus /></el-icon>添加教师</el-button>
       </div>
     </div>
 
     <div class="table-card">
-      <el-table :data="teachers" v-loading="loading" stripe style="width: 100%">
-        <el-table-column prop="id" label="ID" width="70" align="center" />
-        <el-table-column prop="name" label="姓名" min-width="100">
+      <el-table :data="teachers" v-loading="loading" stripe>
+        <el-table-column prop="id" label="序号" width="60" align="center" />
+        <el-table-column prop="name" label="姓名">
           <template #default="{ row }">
             <div class="teacher-cell">
               <el-avatar :size="28" style="background: linear-gradient(135deg, #67C23A 0%, #5daf34 100%);">{{ row.name?.charAt(0) }}</el-avatar>
@@ -108,17 +109,14 @@ onMounted(() => fetchTeachers())
           </template>
         </el-table-column>
         <el-table-column prop="gender" label="性别" width="70" align="center">
-          <template #default="{ row }"><el-tag :type="row.gender === '男' ? 'primary' : 'warning'" size="small">{{ row.gender }}</el-tag></template>
+          <template #default="{ row }"><el-tag :type="row.gender === '男' ? '' : 'warning'" size="small">{{ row.gender }}</el-tag></template>
         </el-table-column>
         <el-table-column prop="subject" label="科目" width="90" align="center">
           <template #default="{ row }"><el-tag type="success" size="small">{{ row.subject }}</el-tag></template>
         </el-table-column>
-        <el-table-column prop="email" label="邮箱" min-width="150" show-overflow-tooltip />
         <el-table-column prop="phone" label="手机号" width="120" />
-        <el-table-column prop="remark" label="备注" min-width="140" show-overflow-tooltip>
-          <template #default="{ row }"><span class="remark-text">{{ row.remark || '-' }}</span></template>
-        </el-table-column>
-        <el-table-column label="操作" width="120" align="center">
+        <el-table-column prop="email" label="邮箱" min-width="150" show-overflow-tooltip />
+        <el-table-column label="操作" width="100" align="center">
           <template #default="{ row }">
             <el-button type="primary" link @click="openEditDialog(row)">编辑</el-button>
             <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
@@ -127,40 +125,64 @@ onMounted(() => fetchTeachers())
       </el-table>
     </div>
 
-    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="420px" :show-close="false">
+    <el-dialog v-model="dialogVisible" width="480px" class="custom-dialog" :show-close="false">
       <template #header>
-        <span class="custom-header">
-          <span>{{ dialogTitle }}</span>
-          <el-icon class="close-icon" @click="dialogVisible = false"><CircleClose /></el-icon>
-        </span>
+        <div class="dialog-header">
+          <div class="dialog-title-section">
+            <div class="dialog-icon add">
+              <el-icon><Plus v-if="dialogTitle.includes('添加')" /><Edit v-else /></el-icon>
+            </div>
+            <div class="dialog-text">
+              <h3>{{ dialogTitle }}</h3>
+              <p>{{ dialogTitle.includes('添加') ? '填写教师基本信息' : '修改教师信息' }}</p>
+            </div>
+          </div>
+          <el-icon class="close-btn" @click="dialogVisible = false"><CircleClose /></el-icon>
+        </div>
       </template>
-      <el-form ref="formRef" :model="formData" :rules="rules" label-width="60px" class="simple-form">
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="formData.name" placeholder="请输入姓名" />
+      
+      <el-form ref="formRef" :model="formData" :rules="rules" class="dialog-form">
+        <div class="form-row">
+          <el-form-item prop="name" class="form-item-half">
+            <label><el-icon><User /></el-icon>姓名</label>
+            <el-input v-model="formData.name" placeholder="请输入姓名" />
+          </el-form-item>
+          <el-form-item prop="gender" class="form-item-half">
+            <label><el-icon><Male v-if="formData.gender === '男'" /><Female v-else /></el-icon>性别</label>
+            <el-select v-model="formData.gender" placeholder="请选择" style="width: 100%">
+              <el-option v-for="item in genderOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+        </div>
+        <div class="form-row">
+          <el-form-item prop="subject" class="form-item-half">
+            <label><el-icon><Reading /></el-icon>科目</label>
+            <el-select v-model="formData.subject" placeholder="请选择" style="width: 100%">
+              <el-option v-for="item in subjectOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+          <el-form-item prop="phone" class="form-item-half">
+            <label><el-icon><Phone /></el-icon>手机</label>
+            <el-input v-model="formData.phone" placeholder="请输入手机号" />
+          </el-form-item>
+        </div>
+        <el-form-item prop="email" class="form-item">
+          <label><el-icon><Message /></el-icon>邮箱</label>
+          <el-input v-model="formData.email" placeholder="请输入邮箱地址" />
         </el-form-item>
-        <el-form-item label="性别" prop="gender">
-          <el-select v-model="formData.gender" placeholder="请选择" style="width: 100%">
-            <el-option v-for="item in genderOptions" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="科目" prop="subject">
-          <el-select v-model="formData.subject" placeholder="请选择科目" style="width: 100%">
-            <el-option v-for="item in subjectOptions" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="手机" prop="phone">
-          <el-input v-model="formData.phone" placeholder="请输入手机号" />
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="formData.email" placeholder="请输入邮箱" />
-        </el-form-item>
-        <el-form-item label="备注">
+        <el-form-item class="form-item">
+          <label><el-icon><Document /></el-icon>备注</label>
           <el-input v-model="formData.remark" type="textarea" :rows="2" placeholder="选填" />
         </el-form-item>
       </el-form>
+      
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSubmit">确定</el-button>
+        <div class="dialog-footer">
+          <el-button class="cancel-btn" @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" class="submit-btn" @click="handleSubmit">
+            {{ dialogTitle.includes('添加') ? '确认添加' : '保存修改' }}
+          </el-button>
+        </div>
       </template>
     </el-dialog>
   </div>
@@ -168,33 +190,54 @@ onMounted(() => fetchTeachers())
 
 <style scoped>
 .page-container { padding: 0; }
-.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 12px; }
-.toolbar-left, .toolbar-right { display: flex; gap: 8px; }
-.search-input { width: 200px; }
-.table-card { background: #fff; border-radius: 8px; padding: 12px; }
-.teacher-cell { display: flex; align-items: center; gap: 8px; }
-.remark-text { font-size: 12px; color: #909399; }
-
-.simple-form :deep(.el-form-item) {
-  margin-bottom: 16px;
-}
-
-.custom-header {
+.action-bar {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  font-weight: 600;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
+.left-actions, .right-actions { display: flex; gap: 12px; }
+.search-input { width: 280px; }
+.search-input :deep(.el-input__wrapper) { border-radius: 6px 0 0 6px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); }
+.search-input :deep(.el-input-group__append) { border-radius: 0 6px 6px 0; background: #667eea; border-color: #667eea; color: #fff; }
+.search-input :deep(.el-input-group__append:hover) { background: #5a71d6; }
+.refresh-btn { border-radius: 6px; padding: 8px 12px; }
+.refresh-btn :deep(.el-icon) { font-size: 16px; }
+.add-btn { border-radius: 6px; padding: 8px 16px; }
+.table-card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); }
+.teacher-cell { display: flex; align-items: center; gap: 8px; }
 
-.close-icon {
-  font-size: 18px;
-  color: #909399;
-  cursor: pointer;
-  transition: color 0.3s;
-}
+/* 弹窗样式 */
+:deep(.custom-dialog) { border-radius: 16px; overflow: hidden; }
+:deep(.custom-dialog .el-dialog__header) { margin: 0; padding: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+:deep(.custom-dialog .el-dialog__body) { padding: 28px 32px; }
+:deep(.custom-dialog .el-dialog__footer) { padding: 0 32px 28px; }
 
-.close-icon:hover {
-  color: #F56C6C;
-}
+.dialog-header { display: flex; justify-content: space-between; align-items: center; padding: 24px 32px; }
+.dialog-title-section { display: flex; align-items: center; gap: 16px; }
+.dialog-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); color: #fff; }
+.dialog-text h3 { margin: 0; font-size: 18px; font-weight: 600; color: #fff; }
+.dialog-text p { margin: 4px 0 0; font-size: 13px; color: rgba(255, 255, 255, 0.85); }
+.close-btn { font-size: 20px; color: rgba(255, 255, 255, 0.8); cursor: pointer; transition: color 0.3s; }
+.close-btn:hover { color: #fff; }
+
+.dialog-form { margin-top: 8px; }
+.form-row { display: flex; gap: 16px; }
+.form-item { margin-bottom: 20px; }
+.form-item-half { flex: 1; margin-bottom: 20px; }
+.dialog-form label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; margin-bottom: 8px; font-weight: 500; }
+.dialog-form label .el-icon { color: #667eea; }
+.dialog-form :deep(.el-input__wrapper) { border-radius: 8px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); }
+.dialog-form :deep(.el-input__wrapper:hover) { box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15); }
+.dialog-form :deep(.el-input__wrapper.is-focus) { box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2); }
+.dialog-form :deep(.el-textarea__inner) { border-radius: 8px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); }
+
+.dialog-footer { display: flex; justify-content: flex-end; gap: 12px; }
+.cancel-btn { border-radius: 8px; padding: 10px 24px; }
+.submit-btn { border-radius: 8px; padding: 10px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; }
+.submit-btn:hover { opacity: 0.9; }
 </style>
