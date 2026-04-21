@@ -38,7 +38,11 @@ public class TeacherService {
         }
         String lowerKeyword = keyword.toLowerCase().trim();
         return allTeachers.stream()
-                .filter(t -> t.getName() != null && t.getName().toLowerCase().contains(lowerKeyword))
+                .filter(t -> {
+                    boolean matchName = t.getName() != null && t.getName().toLowerCase().contains(lowerKeyword);
+                    boolean matchPhone = t.getPhone() != null && t.getPhone().contains(keyword.trim());
+                    return matchName || matchPhone;
+                })
                 .collect(Collectors.toList());
     }
 

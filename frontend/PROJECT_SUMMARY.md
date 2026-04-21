@@ -4,14 +4,14 @@
 
 ### 1. 技术栈迁移
 
-| 类别 | 原技术栈 | 新技术栈 | 状态 |
-|------|---------|---------|------|
-| 框架 | React 18 | Vue 3.4+ | ✅ 已完成 |
-| UI库 | Ant Design 5 | Element Plus | ✅ 已完成 |
-| 路由 | React Router 6 | Vue Router 4 | ✅ 已完成 |
-| 状态管理 | React Hooks | Pinia | ✅ 已完成 |
-| 构建工具 | Vite | Vite | ✅ 已完成 |
-| 语言 | TypeScript | TypeScript | ✅ 已完成 |
+| 类别　　 | 原技术栈　　　 | 新技术栈　　 | 状态　　 |
+| ----------| ----------------| --------------| ----------|
+| 框架　　 | React 18　　　 | Vue 3.4+　　 | ✅ 已完成 |
+| UI库　　 | Ant Design 5　 | Element Plus | ✅ 已完成 |
+| 路由　　 | React Router 6 | Vue Router 4 | ✅ 已完成 |
+| 状态管理 | React Hooks　　| Pinia　　　　| ✅ 已完成 |
+| 构建工具 | Vite　　　　　 | Vite　　　　 | ✅ 已完成 |
+| 语言　　 | TypeScript　　 | TypeScript　 | ✅ 已完成 |
 
 ### 2. 已删除的 React 文件
 

@@ -85,7 +85,7 @@ onMounted(() => fetchTeachers())
   <div class="page-container">
     <div class="toolbar">
       <div class="toolbar-left">
-        <el-input v-model="searchKeyword" placeholder="按姓名搜索..." clearable class="search-input" @input="handleSearch" @keyup.enter="handleSearch">
+        <el-input v-model="searchKeyword" placeholder="按姓名或手机号搜索..." clearable class="search-input" @input="handleSearch" @keyup.enter="handleSearch">
           <template #prefix><el-icon><Search /></el-icon></template>
         </el-input>
         <el-button type="primary" @click="handleSearch">搜索</el-button>
