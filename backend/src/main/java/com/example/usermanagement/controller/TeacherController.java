@@ -23,9 +23,15 @@ public class TeacherController {
     }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllTeachers() {
-        log.debug("获取所有老师列表");
-        List<Teacher> teachers = teacherService.getAllTeachers();
+    public ResponseEntity<Map<String, Object>> getAllTeachers(
+            @RequestParam(required = false) String keyword) {
+        log.debug("获取老师列表, keyword={}", keyword);
+        List<Teacher> teachers;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            teachers = teacherService.searchTeachers(keyword);
+        } else {
+            teachers = teacherService.getAllTeachers();
+        }
         log.info("成功获取老师列表, 共 {} 条数据", teachers.size());
         Map<String, Object> response = new HashMap<>();
         response.put("code", 200);

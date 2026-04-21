@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -27,6 +28,18 @@ public class TeacherService {
     public Optional<Teacher> getTeacherById(Long id) {
         log.debug("Service: 根据ID查询老师, id={}", id);
         return teacherDao.findById(id);
+    }
+
+    public List<Teacher> searchTeachers(String keyword) {
+        log.debug("Service: 搜索老师, keyword={}", keyword);
+        List<Teacher> allTeachers = teacherDao.findAll();
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return allTeachers;
+        }
+        String lowerKeyword = keyword.toLowerCase().trim();
+        return allTeachers.stream()
+                .filter(t -> t.getName() != null && t.getName().toLowerCase().contains(lowerKeyword))
+                .collect(Collectors.toList());
     }
 
     public Teacher createTeacher(Teacher teacher) {
