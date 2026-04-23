@@ -40,6 +40,12 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: true, title: '班级管理' }
       },
       {
+        path: 'course',
+        name: 'CourseManagement',
+        component: () => import('@/views/CourseManagement.vue'),
+        meta: { requiresAuth: true, title: '课程管理' }
+      },
+      {
         path: 'student',
         name: 'StudentManagement',
         component: () => import('@/views/StudentManagement.vue'),

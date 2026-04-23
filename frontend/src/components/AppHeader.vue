@@ -15,7 +15,15 @@ const userStore = useUserStore()
 const isCollapsed = ref(false)
 
 const pageTitle = computed(() => {
-  const map: Record<string, string> = { '/user': '用户管理', '/teacher': '教师管理', '/profile': '个人中心' }
+  const map: Record<string, string> = {
+    '/dashboard': '首页',
+    '/user': '用户管理',
+    '/teacher': '教师管理',
+    '/student': '学生管理',
+    '/class': '班级管理',
+    '/course': '课程管理',
+    '/profile': '个人中心'
+  }
   return map[route.path] || ''
 })
 

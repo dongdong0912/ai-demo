@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Refresh, Search, CircleClose, Edit, Delete, User, Male, Female, Phone, Message, Reading, Document, Postcard, Location, Calendar } from '@element-plus/icons-vue'
 import { teacherApi } from '@/api/teacher'
@@ -12,6 +12,11 @@ const dialogTitle = ref('')
 const formData = ref<Partial<Teacher>>({})
 const formRef = ref()
 const searchKeyword = ref('')
+
+// 分页相关
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
 
 const rules = {
   name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
@@ -28,6 +33,7 @@ const fetchTeachers = async () => {
   try {
     const res = await teacherApi.getList(searchKeyword.value)
     teachers.value = res.data || []
+    total.value = teachers.value.length
   } catch {
     ElMessage.error('获取教师列表失败')
   } finally {
@@ -35,8 +41,16 @@ const fetchTeachers = async () => {
   }
 }
 
-const handleSearch = () => { fetchTeachers() }
-const handleRefresh = () => { fetchTeachers() }
+const handleSearch = () => { currentPage.value = 1; fetchTeachers() }
+const handleRefresh = () => { currentPage.value = 1; fetchTeachers() }
+const handlePageChange = (page: number) => { currentPage.value = page }
+
+// 计算当前页数据
+const paginatedTeachers = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  return teachers.value.slice(start, end)
+})
 
 const openAddDialog = () => {
   dialogTitle.value = '添加教师'
@@ -105,7 +119,7 @@ onMounted(() => fetchTeachers())
     </div>
 
     <div class="table-card">
-      <el-table :data="teachers" v-loading="loading" stripe>
+      <el-table :data="paginatedTeachers" v-loading="loading" stripe>
         <el-table-column prop="id" label="序号" width="60" align="center" />
         <el-table-column prop="name" label="姓名" min-width="100">
           <template #default="{ row }">
@@ -116,7 +130,7 @@ onMounted(() => fetchTeachers())
           </template>
         </el-table-column>
         <el-table-column prop="gender" label="性别" min-width="70" align="center">
-          <template #default="{ row }"><el-tag :type="row.gender === '男' ? '' : 'warning'" size="small">{{ row.gender }}</el-tag></template>
+          <template #default="{ row }"><el-tag :type="row.gender === '男' ? undefined : 'warning'" size="small">{{ row.gender }}</el-tag></template>
         </el-table-column>
         <el-table-column prop="subject" label="科目" min-width="90" align="center">
           <template #default="{ row }"><el-tag type="success" size="small">{{ row.subject }}</el-tag></template>
@@ -138,21 +152,23 @@ onMounted(() => fetchTeachers())
           </template>
         </el-table-column>
       </el-table>
+      <div class="pagination-wrapper">
+        <el-pagination
+          v-model:current-page="currentPage"
+          :page-size="pageSize"
+          :total="total"
+          layout="total, prev, pager, next, jumper"
+          background
+          @current-change="handlePageChange"
+        />
+      </div>
     </div>
 
-    <el-dialog v-model="dialogVisible" width="560px" class="custom-dialog" :show-close="false">
+    <el-dialog v-model="dialogVisible" width="580px" :show-close="false">
       <template #header>
         <div class="dialog-header">
-          <div class="dialog-title-section">
-            <div class="dialog-icon add">
-              <el-icon><Plus v-if="dialogTitle.includes('添加')" /><Edit v-else /></el-icon>
-            </div>
-            <div class="dialog-text">
-              <h3>{{ dialogTitle }}</h3>
-              <p>{{ dialogTitle.includes('添加') ? '填写教师基本信息' : '修改教师信息' }}</p>
-            </div>
-          </div>
-          <el-icon class="close-btn" @click="dialogVisible = false"><CircleClose /></el-icon>
+          <span class="dialog-title">{{ dialogTitle }}</span>
+          <span class="close-btn" @click="dialogVisible = false">&times;</span>
         </div>
       </template>
       
@@ -237,6 +253,33 @@ onMounted(() => fetchTeachers())
 </template>
 
 <style scoped>
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 8px;
+}
+.dialog-title { font-size: 16px; font-weight: 600; color: #303133; }
+.close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f0f2f5;
+  color: #666;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1;
+  user-select: none;
+}
+.close-btn:hover {
+  background: #e4e7ed;
+  color: #303133;
+}
+
 .page-container { padding: 0; }
 .action-bar {
   background: #fff;
@@ -258,33 +301,23 @@ onMounted(() => fetchTeachers())
 .add-btn { border-radius: 6px; padding: 8px 16px; }
 .table-card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); }
 .teacher-cell { display: flex; align-items: center; gap: 8px; }
+.pagination-wrapper { display: flex; justify-content: flex-end; margin-top: 16px; }
 
-::deep(.custom-dialog) { border-radius: 16px; overflow: hidden; }
-::deep(.custom-dialog .el-dialog__header) { margin: 0; padding: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-::deep(.custom-dialog .el-dialog__body) { padding: 28px 32px; max-height: 65vh; overflow-y: auto; }
-::deep(.custom-dialog .el-dialog__footer) { padding: 0 32px 28px; }
 
-.dialog-header { display: flex; justify-content: space-between; align-items: center; padding: 24px 32px; }
-.dialog-title-section { display: flex; align-items: center; gap: 16px; }
-.dialog-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); color: #fff; }
-.dialog-text h3 { margin: 0; font-size: 18px; font-weight: 600; color: #fff; }
-.dialog-text p { margin: 4px 0 0; font-size: 13px; color: rgba(255, 255, 255, 0.85); }
-.close-btn { font-size: 20px; color: rgba(255, 255, 255, 0.8); cursor: pointer; transition: color 0.3s; }
-.close-btn:hover { color: #fff; }
-
-.dialog-form { margin-top: 8px; }
+.dialog-form { padding: 24px 24px 0; }
 .form-row { display: flex; gap: 16px; }
 .form-item { margin-bottom: 20px; }
 .form-item-half { flex: 1; margin-bottom: 20px; }
-.dialog-form label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #64748b; margin-bottom: 8px; font-weight: 500; }
-.dialog-form label .el-icon { color: #667eea; }
-.dialog-form :deep(.el-input__wrapper) { border-radius: 8px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); }
-.dialog-form :deep(.el-input__wrapper:hover) { box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15); }
-.dialog-form :deep(.el-input__wrapper.is-focus) { box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2); }
-.dialog-form :deep(.el-textarea__inner) { border-radius: 8px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); }
+.dialog-form label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666; margin-bottom: 8px; }
+.dialog-form label .el-icon { color: #999; }
+.dialog-form :deep(.el-input__wrapper) { border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: none !important; }
+.dialog-form :deep(.el-input__wrapper:hover) { border-color: #aaa; }
+.dialog-form :deep(.el-input__wrapper.is-focus) { border-color: #667eea; }
+.dialog-form :deep(.el-textarea__inner) { border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: none !important; }
 
 .dialog-footer { display: flex; justify-content: flex-end; gap: 12px; }
-.cancel-btn { border-radius: 8px; padding: 10px 24px; }
-.submit-btn { border-radius: 8px; padding: 10px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; }
-.submit-btn:hover { opacity: 0.9; }
+.cancel-btn { border-radius: 6px; border: 1px solid #ddd; color: #666; }
+.cancel-btn:hover { border-color: #999; color: #333; }
+.submit-btn { border-radius: 6px; background: #667eea; border: none; }
+.submit-btn:hover { background: #5a71d6; }
 </style>

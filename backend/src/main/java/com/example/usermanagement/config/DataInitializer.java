@@ -1,9 +1,11 @@
 package com.example.usermanagement.config;
 
+import com.example.usermanagement.entity.Course;
 import com.example.usermanagement.entity.GradeClass;
 import com.example.usermanagement.entity.Student;
 import com.example.usermanagement.entity.Teacher;
 import com.example.usermanagement.entity.User;
+import com.example.usermanagement.dao.CourseDao;
 import com.example.usermanagement.dao.GradeClassDao;
 import com.example.usermanagement.dao.StudentDao;
 import com.example.usermanagement.dao.TeacherDao;
@@ -26,7 +28,8 @@ public class DataInitializer {
 
     @Bean
     public CommandLineRunner initData(TeacherDao teacherDao, UserDao userDao,
-                                     GradeClassDao gradeClassDao, StudentDao studentDao) {
+                                     GradeClassDao gradeClassDao, StudentDao studentDao,
+                                     CourseDao courseDao) {
         return args -> {
             // 初始化测试账号
             initTestUsers(userDao);
@@ -39,6 +42,9 @@ public class DataInitializer {
 
             // 初始化学生数据
             initStudentData(studentDao, gradeClassDao);
+
+            // 初始化课程数据
+            initCourseData(courseDao, teacherDao);
         };
     }
 
@@ -94,7 +100,9 @@ public class DataInitializer {
 
     private void initTeacherData(TeacherDao teacherDao) {
         if (teacherDao.count() > 0) {
-            log.info("数据库中已有 {} 条老师数据，跳过老师数据初始化", teacherDao.count());
+            log.info("数据库中已有 {} 条老师数据，检查并修复缺失的职称字段...", teacherDao.count());
+            // 修复已有数据中缺失的title
+            fixMissingTitles(teacherDao);
             return;
         }
 
@@ -126,6 +134,32 @@ public class DataInitializer {
 
         teacherDao.saveAll(teachers);
         log.info("成功插入 {} 条老师数据", teachers.size());
+    }
+
+    /**
+     * 修复缺失职称字段的教师数据
+     */
+    private void fixMissingTitles(TeacherDao teacherDao) {
+        String[] titles = {"初级教师", "二级教师", "一级教师", "高级教师", "正高级教师"};
+        List<Teacher> allTeachers = teacherDao.findAll();
+        List<Teacher> needFix = new ArrayList<>();
+        int fixedCount = 0;
+
+        for (int i = 0; i < allTeachers.size(); i++) {
+            Teacher t = allTeachers.get(i);
+            if (t.getTitle() == null || t.getTitle().isEmpty()) {
+                t.setTitle(titles[i % titles.length]);
+                needFix.add(t);
+                fixedCount++;
+            }
+        }
+
+        if (fixedCount > 0) {
+            teacherDao.saveAll(needFix);
+            log.info("成功修复 {} 条教师的职称数据", fixedCount);
+        } else {
+            log.info("所有教师的职称数据完整，无需修复");
+        }
     }
 
     private void initClassData(GradeClassDao gradeClassDao, TeacherDao teacherDao) {
@@ -237,5 +271,69 @@ public class DataInitializer {
         int start = className.indexOf('(') + 1;
         int end = className.indexOf(')');
         return Integer.parseInt(className.substring(start, end));
+    }
+
+    private void initCourseData(CourseDao courseDao, TeacherDao teacherDao) {
+        if (courseDao.count() > 0) {
+            log.info("数据库中已有 {} 条课程数据，跳过课程数据初始化", courseDao.count());
+            return;
+        }
+
+        log.info("开始初始化课程测试数据...");
+        List<Teacher> teachers = teacherDao.findAll();
+        List<Course> courses = new ArrayList<>();
+
+        // 必修课
+        courses.add(createCourse("语文", "YW101", "必修", 6.0, 108, "语言文学", 
+                teachers.size() > 0 ? teachers.get(0).getId() : null, "培养学生的语言文字运用能力"));
+        courses.add(createCourse("数学", "SX101", "必修", 6.0, 108, "数理科学",
+                teachers.size() > 1 ? teachers.get(1).getId() : null, "培养学生的逻辑思维和运算能力"));
+        courses.add(createCourse("英语", "YY101", "必修", 5.0, 90, "外语",
+                teachers.size() > 2 ? teachers.get(2).getId() : null, "培养学生的英语综合运用能力"));
+        courses.add(createCourse("物理", "WL101", "必修", 4.0, 72, "数理科学",
+                teachers.size() > 3 ? teachers.get(3).getId() : null, "培养学生的物理思维和实验能力"));
+        courses.add(createCourse("化学", "HX101", "必修", 4.0, 72, "数理科学",
+                teachers.size() > 4 ? teachers.get(4).getId() : null, "培养学生的化学实验和理论分析能力"));
+        courses.add(createCourse("生物", "SW101", "必修", 3.0, 54, "生命科学",
+                teachers.size() > 5 ? teachers.get(5).getId() : null, "培养学生的生命科学素养"));
+        courses.add(createCourse("历史", "LS101", "必修", 3.0, 54, "人文社科",
+                teachers.size() > 6 ? teachers.get(6).getId() : null, "培养学生的历史意识和文化素养"));
+        courses.add(createCourse("地理", "DL101", "必修", 3.0, 54, "人文社科",
+                teachers.size() > 7 ? teachers.get(7).getId() : null, "培养学生的地理素养和环保意识"));
+        courses.add(createCourse("政治", "ZZ101", "必修", 3.0, 54, "人文社科",
+                teachers.size() > 8 ? teachers.get(8).getId() : null, "培养学生的政治素养和公民意识"));
+
+        // 选修课
+        courses.add(createCourse("音乐鉴赏", "YY201", "选修", 2.0, 36, "艺术",
+                teachers.size() > 9 ? teachers.get(9).getId() : null, "提高学生的音乐审美能力"));
+        courses.add(createCourse("美术鉴赏", "MS201", "选修", 2.0, 36, "艺术",
+                teachers.size() > 10 ? teachers.get(10).getId() : null, "提高学生的美术鉴赏能力"));
+        courses.add(createCourse("体育与健康", "TY201", "必修", 3.0, 54, "体育",
+                teachers.size() > 11 ? teachers.get(11).getId() : null, "增强学生体质和健康意识"));
+        courses.add(createCourse("信息技术", "XX201", "选修", 2.0, 36, "信息技术",
+                teachers.size() > 12 ? teachers.get(12).getId() : null, "培养学生的信息素养和计算思维"));
+        courses.add(createCourse("通用技术", "TY301", "选修", 2.0, 36, "信息技术",
+                null, "培养学生的技术设计和实践能力"));
+        courses.add(createCourse("研究性学习", "YJ401", "选修", 2.0, 36, "综合实践",
+                null, "培养学生的研究能力和创新精神"));
+
+        courseDao.saveAll(courses);
+        log.info("成功插入 {} 条课程数据", courses.size());
+    }
+
+    private Course createCourse(String courseName, String courseCode, String type, 
+                               Double credit, Integer totalHours, String category,
+                               Long teacherId, String description) {
+        Course course = new Course();
+        course.setCourseName(courseName);
+        course.setCourseCode(courseCode);
+        course.setType(type);
+        course.setCredit(credit);
+        course.setTotalHours(totalHours);
+        course.setCategory(category);
+        course.setTeacherId(teacherId);
+        course.setDescription(description);
+        course.setStatus(1);
+        return course;
     }
 }

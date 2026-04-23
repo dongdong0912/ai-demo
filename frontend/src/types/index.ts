@@ -73,14 +73,41 @@ export interface Student {
   updateTime?: string
 }
 
+export interface Course {
+  id?: number
+  courseName: string
+  courseCode?: string
+  type?: string
+  credit?: number
+  totalHours?: number
+  category?: string
+  teacherId?: number
+  description?: string
+  status: number
+  createTime?: string
+  updateTime?: string
+}
+
 export interface DashboardStats {
   totalUsers: number
   totalTeachers: number
   totalStudents: number
   totalClasses: number
+  totalCourses: number
   activeStudents: number
   activeTeachers: number
   activeClasses: number
+  activeCourses: number
+}
+
+export interface DashboardChartData {
+  teacherSubjectDist: Record<string, number>
+  gradeStudentDist: Record<string, number>
+  classStudentCount: Array<{ className: string; gradeName: string; count: number }>
+  courseCategoryDist: Record<string, number>
+  courseTypeDist: Record<string, number>
+  teacherTitleDist: Record<string, number>
+  studentStatusDist: Record<string, number>
 }
 
 export interface LoginForm {

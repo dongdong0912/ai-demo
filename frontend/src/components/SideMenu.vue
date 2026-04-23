@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { User, Reading, HomeFilled, School, UserFilled } from '@element-plus/icons-vue'
+import { User, Reading, HomeFilled, School, UserFilled, Notebook } from '@element-plus/icons-vue'
 
 const props = defineProps<{
   collapsed: boolean
@@ -15,7 +15,8 @@ const menuItems = [
   { path: '/user', name: 'UserManagement', title: '用户管理', icon: User },
   { path: '/teacher', name: 'TeacherManagement', title: '教师管理', icon: Reading },
   { path: '/class', name: 'ClassManagement', title: '班级管理', icon: School },
-  { path: '/student', name: 'StudentManagement', title: '学生管理', icon: UserFilled }
+  { path: '/student', name: 'StudentManagement', title: '学生管理', icon: UserFilled },
+  { path: '/course', name: 'CourseManagement', title: '课程管理', icon: Notebook }
 ]
 
 const activeMenu = computed(() => route.path)
