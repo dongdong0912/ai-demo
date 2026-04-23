@@ -34,6 +34,18 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: true, title: '教师管理' }
       },
       {
+        path: 'class',
+        name: 'ClassManagement',
+        component: () => import('@/views/ClassManagement.vue'),
+        meta: { requiresAuth: true, title: '班级管理' }
+      },
+      {
+        path: 'student',
+        name: 'StudentManagement',
+        component: () => import('@/views/StudentManagement.vue'),
+        meta: { requiresAuth: true, title: '学生管理' }
+      },
+      {
         path: 'profile',
         name: 'Profile',
         component: () => import('@/views/Profile.vue'),

@@ -12,12 +12,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "t_teacher")
-public class Teacher {
+@Table(name = "t_student")
+public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "student_no", nullable = false, unique = true, length = 20)
+    private String studentNo;
 
     @Column(nullable = false, length = 50)
     private String name;
@@ -25,28 +28,34 @@ public class Teacher {
     @Column(length = 10)
     private String gender;
 
-    @Column(length = 50)
-    private String subject;
-
-    @Column(length = 30)
-    private String title;
-
     @Column(name = "id_card", length = 18)
     private String idCard;
 
-    @Column(length = 30)
+    @Column(name = "class_id")
+    private Long classId;
+
+    @Column(length = 20)
     private String phone;
 
-    @Column(length = 100)
-    private String email;
+    @Column(name = "parent_phone", length = 20)
+    private String parentPhone;
+
+    @Column(name = "parent_name", length = 50)
+    private String parentName;
 
     @Column(length = 200)
     private String address;
 
     private LocalDate birthDate;
 
-    @Column(name = "entry_date")
-    private LocalDate entryDate;
+    @Column(length = 20)
+    private String nation;
+
+    @Column(name = "native_place", length = 50)
+    private String nativePlace;
+
+    @Column(name = "enrollment_date")
+    private LocalDate enrollmentDate;
 
     @Column(length = 200)
     private String remark;

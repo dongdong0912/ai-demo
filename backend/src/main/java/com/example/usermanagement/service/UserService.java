@@ -50,8 +50,12 @@ public class UserService {
         }
 
         user.setUsername(userDetails.getUsername());
+        user.setRealName(userDetails.getRealName());
+        user.setGender(userDetails.getGender());
         user.setEmail(userDetails.getEmail());
         user.setPhone(userDetails.getPhone());
+        user.setDepartment(userDetails.getDepartment());
+        user.setRole(userDetails.getRole());
         user.setStatus(userDetails.getStatus());
 
         return userDao.save(user);

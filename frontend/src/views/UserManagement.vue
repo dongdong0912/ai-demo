@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Refresh, Search, CircleClose, User as UserIcon, Message, Phone, Key } from '@element-plus/icons-vue'
+import { Plus, Refresh, Search, CircleClose, User as UserIcon, Message, Phone, Key, Male, Female, House } from '@element-plus/icons-vue'
 import { userApi } from '@/api/user'
 import type { User } from '@/types'
 
@@ -38,7 +38,7 @@ const handleRefresh = () => { fetchUsers(); ElMessage.success('刷新成功') }
 
 const openAddDialog = () => {
   dialogTitle.value = '添加用户'
-  formData.value = { username: '', email: '', phone: '', role: 'USER', status: 1 }
+  formData.value = { username: '', realName: '', gender: '男', email: '', phone: '', department: '', role: 'USER', status: 1 }
   dialogVisible.value = true
 }
 
@@ -136,20 +136,29 @@ onMounted(() => fetchUsers())
               <el-avatar :size="32" class="user-avatar">
                 {{ row.username?.charAt(0).toUpperCase() }}
               </el-avatar>
-              <span class="username">{{ row.username }}</span>
+              <div class="user-detail">
+                <span class="username">{{ row.username }}</span>
+                <span class="real-name" v-if="row.realName">{{ row.realName }}</span>
+              </div>
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="email" label="邮箱" min-width="160" show-overflow-tooltip />
-        <el-table-column prop="phone" label="手机号" width="120" />
-        <el-table-column prop="role" label="角色" width="90" align="center">
+        <el-table-column prop="gender" label="性别" min-width="70" align="center">
+          <template #default="{ row }">
+            <el-tag :type="row.gender === '男' ? '' : 'warning'" size="small">{{ row.gender || '-' }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="department" label="部门" min-width="100" show-overflow-tooltip />
+        <el-table-column prop="email" label="邮箱" min-width="180" show-overflow-tooltip />
+        <el-table-column prop="phone" label="手机号" min-width="130" />
+        <el-table-column prop="role" label="角色" min-width="90" align="center">
           <template #default="{ row }">
             <el-tag :type="row.role === 'ADMIN' ? 'danger' : 'primary'" size="small">
               {{ getRoleLabel(row.role) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="80" align="center">
+        <el-table-column prop="status" label="状态" min-width="80" align="center">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'info'" size="small">
               {{ getStatusLabel(row.status) }}
@@ -183,10 +192,29 @@ onMounted(() => fetchUsers())
       </template>
       
       <el-form ref="formRef" :model="formData" :rules="rules" class="dialog-form">
-        <el-form-item prop="username" class="form-item">
-          <label><el-icon><UserIcon /></el-icon>用户名</label>
-          <el-input v-model="formData.username" placeholder="请输入用户名" />
-        </el-form-item>
+        <div class="form-row">
+          <el-form-item prop="username" class="form-item-half">
+            <label><el-icon><UserIcon /></el-icon>用户名</label>
+            <el-input v-model="formData.username" placeholder="请输入用户名" />
+          </el-form-item>
+          <el-form-item prop="realName" class="form-item-half">
+            <label><el-icon><UserIcon /></el-icon>真实姓名</label>
+            <el-input v-model="formData.realName" placeholder="请输入真实姓名" />
+          </el-form-item>
+        </div>
+        <div class="form-row">
+          <el-form-item prop="gender" class="form-item-half">
+            <label><el-icon><Male v-if="formData.gender === '男'" /><Female v-else /></el-icon>性别</label>
+            <el-select v-model="formData.gender" placeholder="请选择" style="width: 100%">
+              <el-option label="男" value="男" />
+              <el-option label="女" value="女" />
+            </el-select>
+          </el-form-item>
+          <el-form-item prop="department" class="form-item-half">
+            <label><el-icon><House /></el-icon>部门</label>
+            <el-input v-model="formData.department" placeholder="请输入部门" />
+          </el-form-item>
+        </div>
         <el-form-item prop="email" class="form-item">
           <label><el-icon><Message /></el-icon>邮箱</label>
           <el-input v-model="formData.email" placeholder="请输入邮箱地址" />
@@ -203,7 +231,7 @@ onMounted(() => fetchUsers())
             </el-select>
           </el-form-item>
           <el-form-item prop="status" class="form-item-half">
-            <label><el-icon><CircleCheck /></el-icon>状态</label>
+            <label>状态</label>
             <el-radio-group v-model="formData.status" class="status-group">
               <el-radio :label="1">
                 <span class="radio-option active">正常</span>
@@ -364,6 +392,16 @@ onMounted(() => fetchUsers())
   font-weight: 600;
   color: #1e293b;
   font-size: 14px;
+}
+
+.user-detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.real-name {
+  font-size: 12px;
+  color: #909399;
 }
 
 /* 操作按钮 */

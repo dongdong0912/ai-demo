@@ -59,8 +59,13 @@ public class TeacherService {
         teacher.setName(teacherDetails.getName());
         teacher.setGender(teacherDetails.getGender());
         teacher.setSubject(teacherDetails.getSubject());
+        teacher.setTitle(teacherDetails.getTitle());
+        teacher.setIdCard(teacherDetails.getIdCard());
         teacher.setPhone(teacherDetails.getPhone());
         teacher.setEmail(teacherDetails.getEmail());
+        teacher.setAddress(teacherDetails.getAddress());
+        teacher.setBirthDate(teacherDetails.getBirthDate());
+        teacher.setEntryDate(teacherDetails.getEntryDate());
         teacher.setRemark(teacherDetails.getRemark());
         teacher.setStatus(teacherDetails.getStatus());
 

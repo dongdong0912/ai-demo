@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Refresh, Search, CircleClose, Edit, Delete, User, Male, Female, Phone, Message, Reading, Document } from '@element-plus/icons-vue'
+import { Plus, Refresh, Search, CircleClose, Edit, Delete, User, Male, Female, Phone, Message, Reading, Document, Postcard, Location, Calendar } from '@element-plus/icons-vue'
 import { teacherApi } from '@/api/teacher'
 import type { Teacher } from '@/types'
 
@@ -20,7 +20,8 @@ const rules = {
 }
 
 const genderOptions = [{ label: '男', value: '男' }, { label: '女', value: '女' }]
-const subjectOptions = ['数学', '语文', '英语', '物理', '化学', '历史', '地理', '生物', '政治'].map(s => ({ label: s, value: s }))
+const subjectOptions = ['数学', '语文', '英语', '物理', '化学', '历史', '地理', '生物', '政治', '音乐', '体育', '美术', '信息技术'].map(s => ({ label: s, value: s }))
+const titleOptions = ['初级教师', '二级教师', '一级教师', '高级教师', '正高级教师'].map(s => ({ label: s, value: s }))
 
 const fetchTeachers = async () => {
   loading.value = true
@@ -39,13 +40,17 @@ const handleRefresh = () => { fetchTeachers() }
 
 const openAddDialog = () => {
   dialogTitle.value = '添加教师'
-  formData.value = { name: '', gender: '男', subject: '', email: '', phone: '', remark: '' }
+  formData.value = { name: '', gender: '男', subject: '', title: '', idCard: '', email: '', phone: '', address: '', birthDate: '', entryDate: '', remark: '' }
   dialogVisible.value = true
 }
 
 const openEditDialog = (row: Teacher) => {
   dialogTitle.value = '编辑教师'
-  formData.value = { ...row }
+  formData.value = { 
+    ...row,
+    birthDate: row.birthDate ? row.birthDate.split('T')[0] : '',
+    entryDate: row.entryDate ? row.entryDate.split('T')[0] : ''
+  }
   dialogVisible.value = true
 }
 
@@ -78,6 +83,8 @@ const handleDelete = async (row: Teacher) => {
   } catch {}
 }
 
+const formatDate = (date?: string) => date ? date.split('T')[0] : '-'
+
 onMounted(() => fetchTeachers())
 </script>
 
@@ -100,7 +107,7 @@ onMounted(() => fetchTeachers())
     <div class="table-card">
       <el-table :data="teachers" v-loading="loading" stripe>
         <el-table-column prop="id" label="序号" width="60" align="center" />
-        <el-table-column prop="name" label="姓名">
+        <el-table-column prop="name" label="姓名" min-width="100">
           <template #default="{ row }">
             <div class="teacher-cell">
               <el-avatar :size="28" style="background: linear-gradient(135deg, #67C23A 0%, #5daf34 100%);">{{ row.name?.charAt(0) }}</el-avatar>
@@ -108,14 +115,22 @@ onMounted(() => fetchTeachers())
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="gender" label="性别" width="70" align="center">
+        <el-table-column prop="gender" label="性别" min-width="70" align="center">
           <template #default="{ row }"><el-tag :type="row.gender === '男' ? '' : 'warning'" size="small">{{ row.gender }}</el-tag></template>
         </el-table-column>
-        <el-table-column prop="subject" label="科目" width="90" align="center">
+        <el-table-column prop="subject" label="科目" min-width="90" align="center">
           <template #default="{ row }"><el-tag type="success" size="small">{{ row.subject }}</el-tag></template>
         </el-table-column>
-        <el-table-column prop="phone" label="手机号" width="120" />
-        <el-table-column prop="email" label="邮箱" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="title" label="职称" min-width="100" align="center" />
+        <el-table-column prop="phone" label="手机号" min-width="130" />
+        <el-table-column prop="entryDate" label="入职日期" min-width="110" align="center">
+          <template #default="{ row }">{{ formatDate(row.entryDate) }}</template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" min-width="80" align="center">
+          <template #default="{ row }">
+            <el-tag :type="row.status === 1 ? 'success' : 'danger'" size="small">{{ row.status === 1 ? '在职' : '离职' }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="100" align="center">
           <template #default="{ row }">
             <el-button type="primary" link @click="openEditDialog(row)">编辑</el-button>
@@ -125,7 +140,7 @@ onMounted(() => fetchTeachers())
       </el-table>
     </div>
 
-    <el-dialog v-model="dialogVisible" width="480px" class="custom-dialog" :show-close="false">
+    <el-dialog v-model="dialogVisible" width="560px" class="custom-dialog" :show-close="false">
       <template #header>
         <div class="dialog-header">
           <div class="dialog-title-section">
@@ -161,6 +176,18 @@ onMounted(() => fetchTeachers())
               <el-option v-for="item in subjectOptions" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
+          <el-form-item prop="title" class="form-item-half">
+            <label><el-icon><Postcard /></el-icon>职称</label>
+            <el-select v-model="formData.title" placeholder="请选择" style="width: 100%">
+              <el-option v-for="item in titleOptions" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+        </div>
+        <div class="form-row">
+          <el-form-item prop="idCard" class="form-item-half">
+            <label><el-icon><Postcard /></el-icon>身份证号</label>
+            <el-input v-model="formData.idCard" placeholder="请输入身份证号" />
+          </el-form-item>
           <el-form-item prop="phone" class="form-item-half">
             <label><el-icon><Phone /></el-icon>手机</label>
             <el-input v-model="formData.phone" placeholder="请输入手机号" />
@@ -170,9 +197,30 @@ onMounted(() => fetchTeachers())
           <label><el-icon><Message /></el-icon>邮箱</label>
           <el-input v-model="formData.email" placeholder="请输入邮箱地址" />
         </el-form-item>
+        <el-form-item prop="address" class="form-item">
+          <label><el-icon><Location /></el-icon>地址</label>
+          <el-input v-model="formData.address" placeholder="请输入家庭住址" />
+        </el-form-item>
+        <div class="form-row">
+          <el-form-item prop="birthDate" class="form-item-half">
+            <label><el-icon><Calendar /></el-icon>出生日期</label>
+            <el-date-picker v-model="formData.birthDate" type="date" placeholder="选择日期" value-format="YYYY-MM-DD" style="width: 100%" />
+          </el-form-item>
+          <el-form-item prop="entryDate" class="form-item-half">
+            <label><el-icon><Calendar /></el-icon>入职日期</label>
+            <el-date-picker v-model="formData.entryDate" type="date" placeholder="选择日期" value-format="YYYY-MM-DD" style="width: 100%" />
+          </el-form-item>
+        </div>
         <el-form-item class="form-item">
           <label><el-icon><Document /></el-icon>备注</label>
           <el-input v-model="formData.remark" type="textarea" :rows="2" placeholder="选填" />
+        </el-form-item>
+        <el-form-item v-if="formData.id" prop="status" class="form-item">
+          <label>状态</label>
+          <el-select v-model="formData.status" style="width: 100%">
+            <el-option label="在职" :value="1" />
+            <el-option label="离职" :value="0" />
+          </el-select>
         </el-form-item>
       </el-form>
       
@@ -211,11 +259,10 @@ onMounted(() => fetchTeachers())
 .table-card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); }
 .teacher-cell { display: flex; align-items: center; gap: 8px; }
 
-/* 弹窗样式 */
-:deep(.custom-dialog) { border-radius: 16px; overflow: hidden; }
-:deep(.custom-dialog .el-dialog__header) { margin: 0; padding: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-:deep(.custom-dialog .el-dialog__body) { padding: 28px 32px; }
-:deep(.custom-dialog .el-dialog__footer) { padding: 0 32px 28px; }
+::deep(.custom-dialog) { border-radius: 16px; overflow: hidden; }
+::deep(.custom-dialog .el-dialog__header) { margin: 0; padding: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+::deep(.custom-dialog .el-dialog__body) { padding: 28px 32px; max-height: 65vh; overflow-y: auto; }
+::deep(.custom-dialog .el-dialog__footer) { padding: 0 32px 28px; }
 
 .dialog-header { display: flex; justify-content: space-between; align-items: center; padding: 24px 32px; }
 .dialog-title-section { display: flex; align-items: center; gap: 16px; }

@@ -12,47 +12,24 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "t_teacher")
-public class Teacher {
+@Table(name = "t_class")
+public class GradeClass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
-    private String name;
+    @Column(name = "class_name", nullable = false, length = 50)
+    private String className;
 
-    @Column(length = 10)
-    private String gender;
+    @Column(name = "grade_name", nullable = false, length = 50)
+    private String gradeName;
 
-    @Column(length = 50)
-    private String subject;
+    @Column(name = "head_teacher_id")
+    private Long headTeacherId;
 
-    @Column(length = 30)
-    private String title;
-
-    @Column(name = "id_card", length = 18)
-    private String idCard;
-
-    @Column(length = 30)
-    private String phone;
-
-    @Column(length = 100)
-    private String email;
-
-    @Column(length = 200)
-    private String address;
-
-    private LocalDate birthDate;
-
-    @Column(name = "entry_date")
-    private LocalDate entryDate;
-
-    @Column(length = 200)
-    private String remark;
-
-    @Column(length = 500)
-    private String photo;
+    @Column(name = "max_students")
+    private Integer maxStudents = 50;
 
     @Column(nullable = false)
     private Integer status = 1;
