@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Refresh, Search, CircleClose, Edit, Delete, User, School, Reading } from '@element-plus/icons-vue'
+import { Plus, Refresh, Search, CircleClose, Edit, Delete, User, School, Reading, Upload, Download } from '@element-plus/icons-vue'
 import { classApi, type GradeClassWithCount } from '@/api/class'
 import { teacherApi } from '@/api/teacher'
+import { classExcelApi, type ImportResult } from '@/api/excel'
 import type { GradeClass, Teacher } from '@/types'
 
 const classes = ref<GradeClassWithCount[]>([])
@@ -14,6 +15,11 @@ const dialogTitle = ref('')
 const formData = ref<Partial<GradeClass>>({})
 const formRef = ref()
 const searchKeyword = ref('')
+// 导入导出相关
+const importDialogVisible = ref(false)
+const importFileList = ref<any[]>([])
+const importLoading = ref(false)
+const importResult = ref<ImportResult | null>(null)
 
 // 分页相关
 const currentPage = ref(1)
@@ -118,6 +124,24 @@ const handleDelete = async (row: GradeClass) => {
     ElMessage.success('删除成功')
     fetchClasses()
   } catch {}
+}
+
+// 导入操作
+const openImportDialog = () => {
+  importFileList.value = []
+  importResult.value = null
+  importDialogVisible.value = true
+}
+const handleImport = async () => {
+  if (importFileList.value.length === 0) return
+  importLoading.value = true
+  try {
+    const res = await classExcelApi.importData(importFileList.value[0].raw)
+    importResult.value = res.data
+    if (res.data.errorCount === 0) ElMessage.success(`导入成功，共 ${res.data.successCount} 条`)
+    fetchClasses()
+  } catch { ElMessage.error('导入失败') }
+  finally { importLoading.value = false }
 }
 
 onMounted(() => {

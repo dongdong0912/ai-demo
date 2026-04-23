@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Refresh, Search, CircleClose, Edit, Delete, User, Male, Female, Phone, Document, Ticket, School, Postcard, Location, Calendar } from '@element-plus/icons-vue'
+import { Plus, Refresh, Search, CircleClose, Edit, Delete, User, Male, Female, Phone, Document, Ticket, School, Postcard, Location, Calendar, Upload, Download } from '@element-plus/icons-vue'
 import { studentApi } from '@/api/student'
 import { classApi } from '@/api/class'
+import { studentExcelApi, type ImportResult } from '@/api/excel'
 import type { Student, GradeClass } from '@/types'
 
 const students = ref<Student[]>([])
@@ -15,6 +16,11 @@ const formData = ref<Partial<Student>>({})
 const formRef = ref()
 const searchKeyword = ref('')
 const filterClassId = ref<number | undefined>()
+// 导入导出相关
+const importDialogVisible = ref(false)
+const importFileList = ref<any[]>([])
+const importLoading = ref(false)
+const importResult = ref<ImportResult | null>(null)
 
 // 分页相关
 const currentPage = ref(1)
@@ -57,6 +63,24 @@ const getStatusText = (status?: number) => {
 }
 
 const formatDate = (date?: string) => date ? date.split('T')[0] : '-'
+
+// 导入操作
+const openImportDialog = () => {
+  importFileList.value = []
+  importResult.value = null
+  importDialogVisible.value = true
+}
+const handleImport = async () => {
+  if (importFileList.value.length === 0) return
+  importLoading.value = true
+  try {
+    const res = await studentExcelApi.importData(importFileList.value[0].raw)
+    importResult.value = res.data
+    if (res.data.errorCount === 0) ElMessage.success(`导入成功，共 ${res.data.successCount} 条`)
+    fetchStudents()
+  } catch { ElMessage.error('导入失败') }
+  finally { importLoading.value = false }
+}
 
 const fetchStudents = async () => {
   loading.value = true
@@ -184,6 +208,11 @@ onMounted(() => {
         <el-button class="refresh-btn" @click="handleRefresh"><el-icon><Refresh /></el-icon></el-button>
       </div>
       <div class="right-actions">
+        <div class="excel-btn-group">
+          <el-button plain size="default" class="excel-btn" @click="openImportDialog"><el-icon><Upload /></el-icon>导入</el-button>
+          <el-button plain size="default" class="excel-btn" @click="studentExcelApi.exportData()"><el-icon><Download /></el-icon>导出</el-button>
+          <el-button plain size="default" class="excel-btn" @click="studentExcelApi.downloadTemplate()">模板</el-button>
+        </div>
         <el-button type="primary" class="add-btn" @click="openAddDialog"><el-icon><Plus /></el-icon>添加学生</el-button>
       </div>
     </div>
@@ -343,6 +372,34 @@ onMounted(() => {
         </div>
       </template>
     </el-dialog>
+
+    <!-- 导入对话框 -->
+    <el-dialog v-model="importDialogVisible" title="导入学生" width="520px">
+      <div class="import-content">
+        <el-upload drag accept=".xlsx,.xls" :auto-upload="false" :limit="1"
+          :on-change="(file: any, fl: any[]) => { importFileList = fl }"
+          :on-remove="(_: any, fl: any[]) => { importFileList = fl }">
+          <el-icon class="el-icon--upload"><Upload /></el-icon>
+          <div class="el-upload__text">将Excel文件拖到此处，或<em>点击上传</em></div>
+          <template #tip><div class="el-upload__tip">仅支持 .xlsx/.xls 文件，大小不超过10MB</div></template>
+        </el-upload>
+        <div v-if="importResult" class="import-result">
+          <el-alert :title="`导入完成: 成功 ${importResult.successCount} 条，失败 ${importResult.errorCount} 条`"
+                    :type="importResult.errorCount === 0 ? 'success' : 'warning'" show-icon :closable="false" />
+          <el-collapse v-if="importResult.errors.length > 0" class="error-collapse">
+            <el-collapse-item title="查看错误详情">
+              <div v-for="(err, idx) in importResult.errors" :key="idx" class="error-item">{{ err }}</div>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
+      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="importDialogVisible = false">关闭</el-button>
+          <el-button type="primary" :loading="importLoading" @click="handleImport">开始导入</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -419,4 +476,12 @@ onMounted(() => {
 .cancel-btn:hover { border-color: #999; color: #333; }
 .submit-btn { border-radius: 6px; background: #667eea; border: none; }
 .submit-btn:hover { background: #5a71d6; }
+
+/* Excel 导入导出 */
+.excel-btn-group { display: flex; gap: 6px; }
+.excel-btn { border-radius: 6px !important; font-size: 13px; }
+.import-content { padding: 10px 0; }
+.import-result { margin-top: 16px; }
+.error-collapse { margin-top: 10px; }
+.error-item { padding: 4px 0; color: #f56c6c; font-size: 12px; }
 </style>

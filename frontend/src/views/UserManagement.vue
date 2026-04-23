@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Refresh, Search, CircleClose, User as UserIcon, Message, Phone, Key, Male, Female, House } from '@element-plus/icons-vue'
+import { Plus, Refresh, Search, CircleClose, User as UserIcon, Message, Phone, Key, Male, Female, House, Upload, Download, Document } from '@element-plus/icons-vue'
 import { userApi } from '@/api/user'
+import { userExcelApi, type ImportResult } from '@/api/excel'
 import type { User } from '@/types'
 
 const users = ref<User[]>([])
@@ -12,6 +13,11 @@ const dialogTitle = ref('')
 const formData = ref<Partial<User>>({})
 const formRef = ref()
 const searchKeyword = ref('')
+// 导入导出相关
+const importDialogVisible = ref(false)
+const importFileList = ref<any[]>([])
+const importLoading = ref(false)
+const importResult = ref<ImportResult | null>(null)
 
 // 分页相关
 const currentPage = ref(1)
@@ -97,6 +103,29 @@ const getRoleLabel = (role: string) => role === 'ADMIN' ? '管理员' : '普通�
 const getRoleClass = (role: string) => role === 'ADMIN' ? 'role-admin' : 'role-user'
 const formatDate = (date: string) => date ? date.split('T')[0] : '-'
 
+// 导入操作
+const openImportDialog = () => {
+  importFileList.value = []
+  importResult.value = null
+  importDialogVisible.value = true
+}
+const handleImport = async () => {
+  if (importFileList.value.length === 0) return
+  importLoading.value = true
+  try {
+    const res = await userExcelApi.importData(importFileList.value[0].raw)
+    importResult.value = res.data
+    if (res.data.errorCount === 0) {
+      ElMessage.success(`导入成功，共 ${res.data.successCount} 条`)
+      fetchUsers()
+    }
+  } catch {
+    ElMessage.error('导入失败')
+  } finally {
+    importLoading.value = false
+  }
+}
+
 onMounted(() => fetchUsers())
 </script>
 
@@ -123,6 +152,11 @@ onMounted(() => fetchUsers())
         </el-button>
       </div>
       <div class="right-actions">
+        <div class="excel-btn-group">
+          <el-button plain size="default" class="excel-btn" @click="openImportDialog"><el-icon><Upload /></el-icon>导入</el-button>
+          <el-button plain size="default" class="excel-btn" @click="userExcelApi.exportData()"><el-icon><Download /></el-icon>导出</el-button>
+          <el-button plain size="default" class="excel-btn" @click="userExcelApi.downloadTemplate()"><el-icon><Document /></el-icon>模板</el-button>
+        </div>
         <el-button type="primary" class="add-btn" @click="openAddDialog">
           <el-icon><Plus /></el-icon>
           添加用户
@@ -265,6 +299,43 @@ onMounted(() => fetchUsers())
           <el-button type="primary" class="submit-btn" @click="handleSubmit">
             {{ dialogTitle.includes('添加') ? '确认添加' : '保存修改' }}
           </el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- 导入对话框 -->
+    <el-dialog v-model="importDialogVisible" title="导入用户" width="520px">
+      <div class="import-content">
+        <el-upload
+          ref="uploadRef"
+          drag
+          accept=".xlsx,.xls"
+          :auto-upload="false"
+          :limit="1"
+          :on-change="(file: any, fileList: any[]) => { importFileList = fileList }"
+          :on-remove="(file: any, fileList: any[]) => { importFileList = fileList }"
+        >
+          <el-icon class="el-icon--upload"><Upload /></el-icon>
+          <div class="el-upload__text">将Excel文件拖到此处，或<em>点击上传</em></div>
+          <template #tip>
+            <div class="el-upload__tip">仅支持 .xlsx/.xls 文件，大小不超过10MB</div>
+          </template>
+        </el-upload>
+        <!-- 导入结果 -->
+        <div v-if="importResult" class="import-result">
+          <el-alert :title="`导入完成: 成功 ${importResult.successCount} 条，失败 ${importResult.errorCount} 条`"
+                    :type="importResult.errorCount === 0 ? 'success' : 'warning'" show-icon :closable="false" />
+          <el-collapse v-if="importResult.errors.length > 0" class="error-collapse">
+            <el-collapse-item title="查看错误详情">
+              <div v-for="(err, idx) in importResult.errors" :key="idx" class="error-item">{{ err }}</div>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
+      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="importDialogVisible = false">关闭</el-button>
+          <el-button type="primary" :loading="importLoading" @click="handleImport">开始导入</el-button>
         </div>
       </template>
     </el-dialog>
@@ -476,4 +547,12 @@ onMounted(() => fetchUsers())
 .submit-btn { border-radius: 6px; background: #667eea; border: none; }
 .submit-btn:hover { background: #5a71d6; }
 .pagination-wrapper { display: flex; justify-content: flex-end; margin-top: 16px; }
+
+/* Excel 导入导出按钮组 */
+.excel-btn-group { display: flex; gap: 6px; }
+.excel-btn { border-radius: 6px !important; font-size: 13px; }
+.import-content { padding: 10px 0; }
+.import-result { margin-top: 16px; }
+.error-collapse { margin-top: 10px; }
+.error-item { padding: 4px 0; color: #f56c6c; font-size: 12px; }
 </style>
