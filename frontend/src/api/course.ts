@@ -1,22 +1,22 @@
 import request from '@/utils/request'
-import type { ApiResponse, Course } from '@/types'
+import type { Course } from '@/types'
 
 export const courseApi = {
   getList: (keyword?: string) => {
     const params = keyword ? `?keyword=${encodeURIComponent(keyword)}` : ''
-    return request.get<ApiResponse<Course[]>>(`/api/courses${params}`)
+    return request.get<Course[]>(`/api/courses${params}`)
   },
 
   getCourseById: (id: number) => {
-    return request.get<ApiResponse<Course>>(`/api/courses/${id}`)
+    return request.get<Course>(`/api/courses/${id}`)
   },
 
   create: (data: Partial<Course>) => {
-    return request.post<ApiResponse<Course>>('/api/courses', data)
+    return request.post<Course>('/api/courses', data)
   },
 
   update: (data: Partial<Course>) => {
-    return request.put<ApiResponse<Course>>(`/api/courses/${data.id}`, data)
+    return request.put<Course>(`/api/courses/${data.id}`, data)
   },
 
   delete: (id: number) => {

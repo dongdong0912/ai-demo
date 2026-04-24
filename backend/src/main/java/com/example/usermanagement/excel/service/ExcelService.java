@@ -4,6 +4,7 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.example.usermanagement.dao.CourseDao;
 import com.example.usermanagement.dao.GradeClassDao;
+import com.example.usermanagement.dao.ScoreDao;
 import com.example.usermanagement.dao.StudentDao;
 import com.example.usermanagement.dao.TeacherDao;
 import com.example.usermanagement.dao.UserDao;
@@ -32,6 +33,8 @@ public class ExcelService {
     private GradeClassDao gradeClassDao;
     @Autowired
     private CourseDao courseDao;
+    @Autowired
+    private ScoreDao scoreDao;
 
     // ==================== 导出 ====================
 
@@ -70,6 +73,13 @@ public class ExcelService {
         EasyExcel.write(response.getOutputStream(), CourseExcelDTO.class).sheet("课程数据").doWrite(data);
     }
 
+    public void exportScores(HttpServletResponse response) throws Exception {
+        setResponseHeader(response, "成绩列表.xlsx");
+        List<Score> list = scoreDao.findAll();
+        List<ScoreExcelDTO> data = convertToScoreDto(list);
+        EasyExcel.write(response.getOutputStream(), ScoreExcelDTO.class).sheet("成绩数据").doWrite(data);
+    }
+
     // ==================== 模板下载 ====================
 
     public void downloadUserTemplate(HttpServletResponse response) throws Exception {
@@ -95,6 +105,11 @@ public class ExcelService {
     public void downloadCourseTemplate(HttpServletResponse response) throws Exception {
         setResponseHeader(response, "课程导入模板.xlsx");
         EasyExcel.write(response.getOutputStream(), CourseExcelDTO.class).sheet("课程模板").doWrite(new ArrayList<>());
+    }
+
+    public void downloadScoreTemplate(HttpServletResponse response) throws Exception {
+        setResponseHeader(response, "成绩导入模板.xlsx");
+        EasyExcel.write(response.getOutputStream(), ScoreExcelDTO.class).sheet("成绩模板").doWrite(new ArrayList<>());
     }
 
     // ==================== 导入 ====================
@@ -127,6 +142,14 @@ public class ExcelService {
         CourseImportListener listener = new CourseImportListener();
         EasyExcel.read(new ByteArrayInputStream(fileBytes), CourseExcelDTO.class, listener).sheet().doRead();
         return saveAndResult(listener.getSuccessData(), listener.getErrors(), c -> courseDao.save(c));
+    }
+
+    public ImportResult importScores(byte[] fileBytes) {
+        ScoreImportListener listener = new ScoreImportListener(studentDao, courseDao);
+        EasyExcel.read(new ByteArrayInputStream(fileBytes), ScoreExcelDTO.class, listener).sheet().doRead();
+        return saveAndResult(listener.getSuccessData(),
+            listener.getErrors().stream().map(e -> "第" + e.getRow() + "行: " + e.getMessage()).collect(java.util.stream.Collectors.toList()),
+            s -> scoreDao.save(s));
     }
 
     // ==================== 内部工具方法 ====================
@@ -253,6 +276,33 @@ public class ExcelService {
             dto.setCategory(c.getCategory());
             dto.setTeacherId(c.getTeacherId());
             dto.setStatus(c.getStatus());
+            list.add(dto);
+        }
+        return list;
+    }
+
+    private List<ScoreExcelDTO> convertToScoreDto(List<Score> scores) {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        List<ScoreExcelDTO> list = new ArrayList<>();
+        for (Score s : scores) {
+            ScoreExcelDTO dto = new ScoreExcelDTO();
+            dto.setScore(s.getScore());
+            dto.setExamType(s.getExamType());
+            dto.setExamDate(s.getExamDate() != null ? s.getExamDate().format(fmt) : null);
+            dto.setRemark(s.getRemark());
+            
+            // 填充学生信息
+            studentDao.findById(s.getStudentId()).ifPresent(stu -> {
+                dto.setStudentNo(stu.getStudentNo());
+                dto.setStudentName(stu.getName());
+            });
+            
+            // 填充课程信息
+            courseDao.findById(s.getCourseId()).ifPresent(cou -> {
+                dto.setCourseCode(cou.getCourseCode());
+                dto.setCourseName(cou.getCourseName());
+            });
+            
             list.add(dto);
         }
         return list;

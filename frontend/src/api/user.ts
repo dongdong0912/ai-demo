@@ -1,21 +1,21 @@
 import request from '@/utils/request'
-import type { ApiResponse, User } from '@/types'
+import type { User } from '@/types'
 
 export const userApi = {
   getList: () => {
-    return request.get<ApiResponse<User[]>>('/api/users')
+    return request.get<User[]>('/api/users')
   },
 
   getUserById: (id: number) => {
-    return request.get<ApiResponse<User>>(`/api/users/${id}`)
+    return request.get<User>(`/api/users/${id}`)
   },
 
   create: (data: Partial<User>) => {
-    return request.post<ApiResponse<User>>('/api/users', data)
+    return request.post<User>('/api/users', data)
   },
 
   update: (data: Partial<User>) => {
-    return request.put<ApiResponse<User>>(`/api/users/${data.id}`, data)
+    return request.put<User>(`/api/users/${data.id}`, data)
   },
 
   delete: (id: number) => {
@@ -23,14 +23,14 @@ export const userApi = {
   },
 
   getProfile: () => {
-    return request.get<ApiResponse<User>>('/api/users/profile')
+    return request.get<User>('/api/users/profile')
   },
 
   updateProfile: (data: { email?: string; phone?: string; avatar?: string }) => {
-    return request.put<ApiResponse<User>>('/api/users/profile', data)
+    return request.put<User>('/api/users/profile', data)
   },
 
   changePassword: (oldPassword: string, newPassword: string) => {
-    return request.put<ApiResponse<void>>('/api/users/password', { oldPassword, newPassword })
+    return request.put<void>('/api/users/password', { oldPassword, newPassword })
   }
 }

@@ -113,7 +113,7 @@ const handleSubmit = async () => {
   })
 }
 
-const handleDelete = async (row: GradeClass) => {
+const handleDelete = async (row: GradeClassWithCount) => {
   if (row.studentCount && row.studentCount > 0) {
     ElMessage.warning('该班级有学生，无法删除')
     return

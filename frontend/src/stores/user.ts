@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { User, UserInfo, LoginForm } from '@/types'
+import type { User, UserInfo, LoginForm, ApiResponse } from '@/types'
 import { auth } from '@/utils/auth'
 import { authApi } from '@/api/auth'
 import { userApi } from '@/api/user'
@@ -45,9 +45,7 @@ export const useUserStore = defineStore('user', () => {
   async function fetchProfile() {
     try {
       const res = await userApi.getProfile()
-      if (res.code === 200) {
-        profile.value = res.data
-      }
+      profile.value = res as unknown as User
     } catch (error) {
       console.error('获取用户信息失败', error)
     }
@@ -55,9 +53,7 @@ export const useUserStore = defineStore('user', () => {
 
   async function updateProfile(data: { email?: string; phone?: string; avatar?: string }) {
     const res = await userApi.updateProfile(data)
-    if (res.code === 200) {
-      profile.value = res.data
-    }
+    profile.value = res as unknown as User
     return res
   }
 

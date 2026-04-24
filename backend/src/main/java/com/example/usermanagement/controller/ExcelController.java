@@ -96,6 +96,11 @@ public class ExcelController {
         return handleImport(file, excelService::importCourses);
     }
 
+    @PostMapping("/import/scores")
+    public ApiResponse<ExcelService.ImportResult> importScores(@RequestParam("file") MultipartFile file) {
+        return handleImport(file, excelService::importScores);
+    }
+
     // ==================== 内部工具 ====================
 
     private ApiResponse<ExcelService.ImportResult> handleImport(MultipartFile file,

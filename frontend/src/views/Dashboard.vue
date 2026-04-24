@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick, markRaw } from 'vue'
 import { User, Reading, School, UserFilled, Notebook, DataLine } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
@@ -20,11 +20,11 @@ const chartData = ref<DashboardChartData>({
 })
 
 const stats = ref([
-  { title: '用户总数', value: '0', icon: User, color: '#409EFF', key: 'totalUsers' },
-  { title: '教师总数', value: '0', icon: Reading, color: '#67C23A', key: 'totalTeachers' },
-  { title: '学生总数', value: '0', icon: School, color: '#E6A23C', key: 'totalStudents' },
-  { title: '班级总数', value: '0', icon: UserFilled, color: '#909399', key: 'totalClasses' },
-  { title: '课程总数', value: '0', icon: Notebook, color: '#667eea', key: 'totalCourses' }
+  { title: '用户总数', value: '0', icon: markRaw(User), color: '#409EFF', key: 'totalUsers' },
+  { title: '教师总数', value: '0', icon: markRaw(Reading), color: '#67C23A', key: 'totalTeachers' },
+  { title: '学生总数', value: '0', icon: markRaw(School), color: '#E6A23C', key: 'totalStudents' },
+  { title: '班级总数', value: '0', icon: markRaw(UserFilled), color: '#909399', key: 'totalClasses' },
+  { title: '课程总数', value: '0', icon: markRaw(Notebook), color: '#667eea', key: 'totalCourses' }
 ])
 
 // ECharts refs
@@ -50,11 +50,11 @@ const fetchStats = async () => {
     if (res.code === 200) {
       statsData.value = res.data
       stats.value = [
-        { title: '用户总数', value: String(res.data.totalUsers), icon: User, color: '#409EFF', key: 'totalUsers' },
-        { title: '教师总数', value: String(res.data.totalTeachers), icon: Reading, color: '#67C23A', key: 'totalTeachers' },
-        { title: '学生总数', value: String(res.data.totalStudents), icon: School, color: '#E6A23C', key: 'totalStudents' },
-        { title: '班级总数', value: String(res.data.totalClasses), icon: UserFilled, color: '#909399', key: 'totalClasses' },
-        { title: '课程总数', value: String(res.data.totalCourses || 0), icon: Notebook, color: '#667eea', key: 'totalCourses' }
+        { title: '用户总数', value: String(res.data.totalUsers), icon: markRaw(User), color: '#409EFF', key: 'totalUsers' },
+        { title: '教师总数', value: String(res.data.totalTeachers), icon: markRaw(Reading), color: '#67C23A', key: 'totalTeachers' },
+        { title: '学生总数', value: String(res.data.totalStudents), icon: markRaw(School), color: '#E6A23C', key: 'totalStudents' },
+        { title: '班级总数', value: String(res.data.totalClasses), icon: markRaw(UserFilled), color: '#909399', key: 'totalClasses' },
+        { title: '课程总数', value: String(res.data.totalCourses || 0), icon: markRaw(Notebook), color: '#667eea', key: 'totalCourses' }
       ]
     }
   } catch {

@@ -77,3 +77,10 @@ export const courseExcelApi = {
   downloadTemplate: () => downloadFile('/api/excel/template/courses', '课程导入模板.xlsx'),
   importData: (file: File) => uploadExcel('/api/excel/import/courses', file),
 }
+
+// ==================== 成绩 ====================
+export const scoreExcelApi = {
+  exportData: () => downloadFile('/api/excel/export/scores', '成绩列表.xlsx'),
+  downloadTemplate: () => downloadFile('/api/excel/template/scores', '成绩导入模板.xlsx'),
+  importData: (file: File) => uploadExcel('/api/excel/import/scores', file),
+}

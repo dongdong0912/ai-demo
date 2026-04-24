@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus'
 import { auth } from './auth'
 import router from '@/router'
 
-const request: AxiosInstance = axios.create({
+const request = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
@@ -60,4 +60,4 @@ request.interceptors.response.use(
   }
 )
 
-export default request
+export default request as AxiosInstance

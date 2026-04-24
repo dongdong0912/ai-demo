@@ -88,6 +88,7 @@ ai-demo/
 │       │   ├── student.ts
 │       │   ├── class.ts
 │       │   ├── course.ts
+│       │   ├── score.ts
 │       │   └── excel.ts
 │       ├── components/          # 组件
 │       │   └── MainLayout.vue
@@ -108,6 +109,7 @@ ai-demo/
 │           ├── StudentManagement.vue
 │           ├── ClassManagement.vue
 │           ├── CourseManagement.vue
+│           ├── ScoreManagement.vue
 │           └── Profile.vue
 ├── project.md                   # 项目规范文档
 └── SPEC.md                     # 功能规格文档
@@ -121,6 +123,7 @@ ai-demo/
 - **学生管理**：学生列表、新增、编辑、删除、Excel导入导出
 - **班级管理**：班级列表、新增、编辑、删除、Excel导入导出
 - **课程管理**：课程列表、新增、编辑、删除、Excel导入导出
+- **成绩管理**：成绩列表、新增、编辑、删除、按学生/课程筛选、Excel导入导出
 - **登录认证**：JWT Token 认证、路由守卫
 - **个人中心**：基本信息、头像、资料编辑、密码修改
 - **仪表盘**：数据统计、快速操作
@@ -132,6 +135,7 @@ ai-demo/
 - 学生 (Student)
 - 班级 (Class)
 - 课程 (Course)
+- 成绩 (Score)
 
 ## 快速启动
 
@@ -224,6 +228,17 @@ npm run dev
 | POST | /api/courses | 创建课程 | 是 |
 | PUT | /api/courses/{id} | 更新课程 | 是 |
 | DELETE | /api/courses/{id} | 删除课程 | 是 |
+
+### 成绩接口
+| 方法 | 路径 | 描述 | 认证 |
+|------|------|------|------|
+| GET | /api/scores | 获取成绩列表 | 是 |
+| GET | /api/scores/{id} | 获取单个成绩 | 是 |
+| GET | /api/scores/student/{studentId} | 获取学生成绩 | 是 |
+| GET | /api/scores/course/{courseId} | 获取课程成绩 | 是 |
+| POST | /api/scores | 创建成绩 | 是 |
+| PUT | /api/scores/{id} | 更新成绩 | 是 |
+| DELETE | /api/scores/{id} | 删除成绩 | 是 |
 
 ### Excel 接口
 | 方法 | 路径 | 描述 | 认证 |

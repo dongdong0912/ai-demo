@@ -56,20 +56,29 @@
 - [x] Excel 导入/导出
 - [x] Excel 模板下载
 
-### 6. 登录认证
+### 6. 成绩管理
+- [x] 成绩列表展示
+- [x] 成绩新增
+- [x] 成绩编辑
+- [x] 成绩删除
+- [x] 按学生/课程筛选
+- [x] Excel 导入/导出
+- [x] Excel 模板下载
+
+### 7. 登录认证
 - [x] 用户名密码登录
 - [x] JWT Token 认证
 - [x] 路由守卫（未登录跳转登录页）
 - [x] 退出登录
 
-### 7. 个人中心
+### 8. 个人中心
 - [x] 基本信息展示
 - [x] 头像上传/更换
 - [x] 个人资料编辑（邮箱、手机号）
 - [x] 密码修改
 - [x] 登录统计（最后登录时间、登录次数）
 
-### 8. 仪表盘
+### 10. 仪表盘
 - [x] 数据统计展示
 - [x] 快速操作入口
 
@@ -158,6 +167,20 @@
 | createTime | LocalDateTime | 创建时间 |
 | updateTime | LocalDateTime | 更新时间 |
 
+### Score（成绩）
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| id | Long | 主键，自增 |
+| studentId | Long | 学生ID |
+| courseId | Long | 课程ID |
+| score | Double | 成绩分数 |
+| examType | String | 考试类型 |
+| examDate | LocalDate | 考试日期 |
+| remark | String | 备注 |
+| status | Integer | 状态：1-正常，0-作弊，2-缓考 |
+| createTime | LocalDateTime | 创建时间 |
+| updateTime | LocalDateTime | 更新时间 |
+
 ---
 
 ## API 设计
@@ -217,12 +240,23 @@
 | PUT | /api/courses/{id} | 更新课程 | 是 |
 | DELETE | /api/courses/{id} | 删除课程 | 是 |
 
+### 成绩接口
+| 方法 | 路径 | 说明 | 认证 |
+|------|------|------|------|
+| GET | /api/scores | 获取成绩列表（支持 keyword/courseId/studentId 筛选） | 是 |
+| GET | /api/scores/{id} | 获取成绩详情 | 是 |
+| GET | /api/scores/student/{studentId} | 获取学生成绩列表 | 是 |
+| GET | /api/scores/course/{courseId} | 获取课程成绩列表 | 是 |
+| POST | /api/scores | 创建成绩 | 是 |
+| PUT | /api/scores/{id} | 更新成绩 | 是 |
+| DELETE | /api/scores/{id} | 删除成绩 | 是 |
+
 ### Excel 导入导出接口
 | 方法 | 路径 | 说明 | 认证 |
 |------|------|------|------|
-| GET | /api/excel/export/{type} | 导出 Excel，type: user/teacher/student/class/course | 是 |
-| GET | /api/excel/template/{type} | 下载导入模板，type: user/teacher/student/class/course | 是 |
-| POST | /api/excel/import/{type} | 导入 Excel，type: user/teacher/student/class/course | 是 |
+| GET | /api/excel/export/{type} | 导出 Excel，type: user/teacher/student/class/course/score | 是 |
+| GET | /api/excel/template/{type} | 下载导入模板，type: user/teacher/student/class/course/score | 是 |
+| POST | /api/excel/import/{type} | 导入 Excel，type: user/teacher/student/class/course/score | 是 |
 
 ### 文件上传接口
 | 方法 | 路径 | 说明 | 认证 |
@@ -330,6 +364,7 @@ backend/src/main/java/com/example/usermanagement/
 │   ├── StudentController.java          # 学生控制器
 │   ├── ClassController.java            # 班级控制器
 │   ├── CourseController.java           # 课程控制器
+│   ├── ScoreController.java            # 成绩控制器
 │   ├── FileController.java             # 文件上传控制器
 │   └── ExcelController.java            # Excel导入导出控制器
 ├── dao/
@@ -337,7 +372,8 @@ backend/src/main/java/com/example/usermanagement/
 │   ├── TeacherDao.java
 │   ├── StudentDao.java
 │   ├── ClassDao.java
-│   └── CourseDao.java
+│   ├── CourseDao.java
+│   └── ScoreDao.java
 ├── dto/
 │   ├── LoginRequest.java              # 登录请求DTO
 │   ├── ApiResponse.java               # 统一响应格式
@@ -359,13 +395,15 @@ backend/src/main/java/com/example/usermanagement/
 │   │   ├── TeacherExcelDTO.java
 │   │   ├── StudentExcelDTO.java
 │   │   ├── ClassExcelDTO.java
-│   │   └── CourseExcelDTO.java
+│   │   ├── CourseExcelDTO.java
+│   │   └── ScoreExcelDTO.java
 │   ├── listener/                      # Excel 读取监听器
 │   │   ├── UserImportListener.java
 │   │   ├── TeacherImportListener.java
 │   │   ├── StudentImportListener.java
 │   │   ├── ClassImportListener.java
-│   │   └── CourseImportListener.java
+│   │   ├── CourseImportListener.java
+│   │   └── ScoreImportListener.java
 │   └── service/
 │       └── ExcelService.java          # Excel 服务
 ├── interceptor/
@@ -376,7 +414,15 @@ backend/src/main/java/com/example/usermanagement/
 │   ├── TeacherService.java
 │   ├── StudentService.java
 │   ├── ClassService.java
-│   └── CourseService.java
+│   ├── CourseService.java
+│   └── ScoreService.java
+├── entity/
+│   ├── User.java
+│   ├── Teacher.java
+│   ├── Student.java
+│   ├── GradeClass.java
+│   ├── Course.java
+│   └── Score.java
 └── util/
     └── JwtUtil.java                   # JWT工具类
 ```
@@ -413,6 +459,7 @@ frontend/src/
 │   ├── StudentManagement.vue          # 学生管理页面
 │   ├── ClassManagement.vue            # 班级管理页面
 │   ├── CourseManagement.vue           # 课程管理页面
+│   ├── ScoreManagement.vue           # 成绩管理页面
 │   └── Profile.vue                    # 个人中心页面
 ├── App.vue                            # 根组件
 ├── main.ts                            # 应用入口
@@ -432,6 +479,7 @@ frontend/src/
 | /students | StudentManagement | 学生管理 |
 | /classes | ClassManagement | 班级管理 |
 | /courses | CourseManagement | 课程管理 |
+| /scores | ScoreManagement | 成绩管理 |
 | /profile | Profile | 个人中心 |
 
 ---

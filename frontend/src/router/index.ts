@@ -52,6 +52,12 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: true, title: '学生管理' }
       },
       {
+        path: 'score',
+        name: 'ScoreManagement',
+        component: () => import('@/views/ScoreManagement.vue'),
+        meta: { requiresAuth: true, title: '成绩管理' }
+      },
+      {
         path: 'profile',
         name: 'Profile',
         component: () => import('@/views/Profile.vue'),

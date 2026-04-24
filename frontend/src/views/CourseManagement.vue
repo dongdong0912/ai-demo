@@ -4,6 +4,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Refresh, Search, CircleClose, Edit, Notebook, Ticket, Clock, User, Document, TrendCharts } from '@element-plus/icons-vue'
 import { courseApi } from '@/api/course'
 import { teacherApi } from '@/api/teacher'
+import { courseExcelApi, type ImportResult } from '@/api/excel'
 import type { Course, Teacher } from '@/types'
 
 const courses = ref<Course[]>([])

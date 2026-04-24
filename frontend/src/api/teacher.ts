@@ -1,22 +1,22 @@
 import request from '@/utils/request'
-import type { ApiResponse, Teacher } from '@/types'
+import type { Teacher } from '@/types'
 
 export const teacherApi = {
   getList: (keyword?: string) => {
     const params = keyword ? `?keyword=${encodeURIComponent(keyword)}` : ''
-    return request.get<ApiResponse<Teacher[]>>(`/api/teachers${params}`)
+    return request.get<Teacher[]>(`/api/teachers${params}`)
   },
 
   getTeacherById: (id: number) => {
-    return request.get<ApiResponse<Teacher>>(`/api/teachers/${id}`)
+    return request.get<Teacher>(`/api/teachers/${id}`)
   },
 
   create: (data: Partial<Teacher>) => {
-    return request.post<ApiResponse<Teacher>>('/api/teachers', data)
+    return request.post<Teacher>('/api/teachers', data)
   },
 
   update: (data: Partial<Teacher>) => {
-    return request.put<ApiResponse<Teacher>>(`/api/teachers/${data.id}`, data)
+    return request.put<Teacher>(`/api/teachers/${data.id}`, data)
   },
 
   delete: (id: number) => {
@@ -26,7 +26,7 @@ export const teacherApi = {
   uploadImage: (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
-    return request.post<ApiResponse<{ url: string }>>('/api/upload/image', formData, {
+    return request.post<{ url: string }>('/api/upload/image', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
