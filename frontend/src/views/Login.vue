@@ -21,10 +21,13 @@ const handleLogin = async () => {
     const success = await userStore.login(loginForm)
     if (success) {
       ElMessage.success('登录成功')
-      router.push('/user')
+      router.push('/dashboard')
+    } else {
+      ElMessage.error('用户名或密码错误')
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('登录失败', error)
+    ElMessage.error(error?.response?.data?.message || error?.message || '登录失败，请检查网络')
   } finally {
     loading.value = false
   }

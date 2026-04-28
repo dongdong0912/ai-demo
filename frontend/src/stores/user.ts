@@ -20,7 +20,7 @@ export const useUserStore = defineStore('user', () => {
   // Actions
   async function login(form: LoginForm) {
     const res = await authApi.login(form)
-    if (res.code === 200) {
+    if (res.code === 200 && res.data?.token) {
       token.value = res.data.token
       userInfo.value = {
         id: res.data.id,
@@ -31,6 +31,7 @@ export const useUserStore = defineStore('user', () => {
       auth.setUser(userInfo.value)
       return true
     }
+    ElMessage.error(res.message || '登录失败')
     return false
   }
 
