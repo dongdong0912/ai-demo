@@ -90,6 +90,16 @@ const handleImport = async () => {
   finally { importLoading.value = false }
 }
 
+// 导出操作 - 直接使用当前搜索条件导出
+const handleExport = () => {
+  const keyword = [searchName.value, searchStudentNo.value].filter(v => v.trim()).join(' ').trim()
+  const params: any = {}
+  if (keyword) params.keyword = keyword
+  if (filterCourseId.value) params.courseId = filterCourseId.value
+  scoreExcelApi.exportData(params)
+  ElMessage.success('开始导出成绩')
+}
+
 const fetchScores = async () => {
   loading.value = true
   try {
@@ -236,7 +246,7 @@ onMounted(() => {
           <el-button plain size="default" class="excel-btn" @click="openImportDialog">
             <el-icon><Upload /></el-icon>导入
           </el-button>
-          <el-button plain size="default" class="excel-btn" @click="scoreExcelApi.exportData()">
+          <el-button plain size="default" class="excel-btn" @click="handleExport">
             <el-icon><Download /></el-icon>导出
           </el-button>
           <el-button plain size="default" class="excel-btn" @click="scoreExcelApi.downloadTemplate()">

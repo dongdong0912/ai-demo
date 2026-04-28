@@ -3,12 +3,14 @@ import type { LoginForm, LoginResponse, UserInfo, ApiResponse } from '@/types'
 import { auth } from '@/utils/auth'
 
 const request = axios.create({
+  baseURL: '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
   }
 })
 
+// 请求拦截器
 request.interceptors.request.use((config) => {
   const token = auth.getToken()
   if (token) {
@@ -17,9 +19,22 @@ request.interceptors.request.use((config) => {
   return config
 })
 
+// 响应拦截器
+request.interceptors.response.use(
+  (response) => {
+    return response.data
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      auth.logout()
+    }
+    return Promise.reject(error)
+  }
+)
+
 export const authApi = {
   login: (data: LoginForm) => {
-    return request.post<ApiResponse<LoginResponse>>('/api/auth/login', data).then((res) => {
+    return request.post<ApiResponse<LoginResponse>>('/auth/login', data).then((res) => {
       const response = res as unknown as ApiResponse<LoginResponse>
       if (response.code === 200) {
         const { token, id, username, role } = response.data
@@ -31,11 +46,11 @@ export const authApi = {
   },
 
   register: (data: { username: string; password: string }) => {
-    return request.post('/api/auth/register', data)
+    return request.post('/auth/register', data)
   },
 
   getUserInfo: () => {
-    return request.get<ApiResponse<UserInfo>>('/api/auth/userinfo')
+    return request.get<ApiResponse<UserInfo>>('/auth/userinfo')
   },
 
   logout: () => {

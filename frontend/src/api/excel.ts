@@ -7,6 +7,13 @@ export interface ImportResult {
   errors: string[]
 }
 
+export interface ScoreExportParams {
+  keyword?: string
+  courseId?: number
+  studentId?: number
+  examType?: string
+}
+
 /**
  * 文件下载（导出/模板）
  */
@@ -27,9 +34,27 @@ function downloadFile(url: string, filename: string) {
       window.URL.revokeObjectURL(url)
     })
     .catch(() => {
-      // fallback to window.open
       window.open(url, '_blank')
     })
+}
+
+/**
+ * 带参数的文件下载
+ */
+function downloadFileWithParams(url: string, filename: string, params?: Record<string, any>) {
+  if (params) {
+    const searchParams = new URLSearchParams()
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        searchParams.append(key, String(value))
+      }
+    })
+    const queryString = searchParams.toString()
+    if (queryString) {
+      url = url + '?' + queryString
+    }
+  }
+  downloadFile(url, filename)
 }
 
 /**
@@ -80,7 +105,7 @@ export const courseExcelApi = {
 
 // ==================== 成绩 ====================
 export const scoreExcelApi = {
-  exportData: () => downloadFile('/api/excel/export/scores', '成绩列表.xlsx'),
+  exportData: (params?: ScoreExportParams) => downloadFileWithParams('/api/excel/export/scores', '成绩列表.xlsx', params),
   downloadTemplate: () => downloadFile('/api/excel/template/scores', '成绩导入模板.xlsx'),
   importData: (file: File) => uploadExcel('/api/excel/import/scores', file),
 }
