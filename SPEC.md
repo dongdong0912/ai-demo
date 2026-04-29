@@ -65,7 +65,17 @@
 - [x] Excel 导入/导出
 - [x] Excel 模板下载
 
-### 7. 登录认证
+### 7. 成绩分析 (新增)
+- [x] 成绩统计分析（平均分、最高/最低分、及格率）
+- [x] 成绩排名（班级排名、年级排名）
+- [x] 成绩趋势图（ECharts折线图/柱状图）
+- [x] 成绩分布饼图
+- [x] 多维度成绩查询（学年/学期/课程/班级/考试类型筛选）
+- [x] 学生个人成绩单查看
+- [x] 统计分析报告 PDF 导出
+- [x] 学生成绩单 PDF 导出
+
+### 8. 登录认证
 - [x] 用户名密码登录
 - [x] JWT Token 认证
 - [x] 路由守卫（未登录跳转登录页）
@@ -78,7 +88,7 @@
 - [x] 密码修改
 - [x] 登录统计（最后登录时间、登录次数）
 
-### 10. 仪表盘
+### 9. 仪表盘
 - [x] 数据统计展示
 - [x] 快速操作入口
 
@@ -178,6 +188,8 @@
 | examDate | LocalDate | 考试日期 |
 | remark | String | 备注 |
 | status | Integer | 状态：1-正常，0-作弊，2-缓考 |
+| schoolYear | String | 学年（如：2025-2026） |
+| semester | String | 学期（如：第一学期） |
 | createTime | LocalDateTime | 创建时间 |
 | updateTime | LocalDateTime | 更新时间 |
 
@@ -250,6 +262,11 @@
 | POST | /api/scores | 创建成绩 | 是 |
 | PUT | /api/scores/{id} | 更新成绩 | 是 |
 | DELETE | /api/scores/{id} | 删除成绩 | 是 |
+| GET | /api/scores/statistics | 获取成绩统计分析 | 是 |
+| GET | /api/scores/ranking | 获取成绩排名 | 是 |
+| GET | /api/scores/trend | 获取成绩趋势 | 是 |
+| GET | /api/scores/query | 多维度成绩查询 | 是 |
+| GET | /api/scores/report/{studentId} | 获取学生个人成绩单 | 是 |
 
 ### Excel 导入导出接口
 | 方法 | 路径 | 说明 | 认证 |
@@ -382,7 +399,10 @@ backend/src/main/java/com/example/usermanagement/
 │   ├── StudentExcelDTO.java            # 学生Excel DTO
 │   ├── ClassExcelDTO.java             # 班级Excel DTO
 │   ├── CourseExcelDTO.java             # 课程Excel DTO
-│   └── ImportResult.java               # 导入结果DTO
+│   ├── ImportResult.java               # 导入结果DTO
+│   ├── ScoreStatisticsDTO.java         # 成绩统计DTO
+│   ├── ScoreRankingDTO.java            # 成绩排名DTO
+│   └── ScoreTrendDTO.java              # 成绩趋势DTO
 ├── entity/
 │   ├── User.java                      # 用户实体
 │   ├── Teacher.java                   # 教师实体
@@ -504,6 +524,19 @@ npm run dev
 ---
 
 ## 更新日志
+
+### 2026-04-29
+- 新增成绩统计分析功能
+  - 统计分析API：平均分、最高/最低分、及格率
+  - 成绩排名API：班级排名、年级排名
+  - 成绩趋势API：按考试类型的成绩变化趋势
+  - 多维度成绩查询：支持学年/学期/课程/班级/考试类型筛选
+  - 学生个人成绩单：综合成绩报告
+- 新增 PDF 导出功能：统计分析报告和学生成绩单
+- 新增 ECharts 图表：成绩分布饼图、成绩趋势折线图
+- 新增前端页面 `ScoreAnalysis.vue`
+- 新增 DTO：`ScoreStatisticsDTO`、`ScoreRankingDTO`、`ScoreTrendDTO`
+- Score 实体新增 `schoolYear` 和 `semester` 字段
 
 ### 2026-04-24
 - 新增 EasyExcel 导入导出功能

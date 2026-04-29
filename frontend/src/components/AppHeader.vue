@@ -23,6 +23,7 @@ const pageTitle = computed(() => {
     '/class': '班级管理',
     '/course': '课程管理',
     '/score': '成绩管理',
+    '/score-analysis': '成绩分析',
     '/profile': '个人中心'
   }
   return map[route.path] || ''

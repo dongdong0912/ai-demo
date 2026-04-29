@@ -39,6 +39,12 @@ public class Score {
     @Column(nullable = false)
     private Integer status = 1;
 
+    @Column(name = "school_year", length = 20)
+    private String schoolYear;
+
+    @Column(length = 20)
+    private String semester;
+
     @Column(name = "create_time", nullable = false, updatable = false)
     private LocalDateTime createTime;
 

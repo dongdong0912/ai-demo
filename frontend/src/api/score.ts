@@ -51,5 +51,100 @@ export const scoreApi = {
 
   delete: (id: number) => {
     return request.delete(`/api/scores/${id}`)
+  },
+
+  // 统计分析
+  getStatistics: (params?: {
+    schoolYear?: string
+    semester?: string
+    courseId?: number
+    classId?: number
+    gradeId?: number
+    examType?: string
+  }) => {
+    const searchParams = new URLSearchParams()
+    if (params?.schoolYear) searchParams.append('schoolYear', params.schoolYear)
+    if (params?.semester) searchParams.append('semester', params.semester)
+    if (params?.courseId) searchParams.append('courseId', String(params.courseId))
+    if (params?.classId) searchParams.append('classId', String(params.classId))
+    if (params?.gradeId) searchParams.append('gradeId', String(params.gradeId))
+    if (params?.examType) searchParams.append('examType', params.examType)
+    const query = searchParams.toString()
+    return request.get(`/api/scores/statistics${query ? '?' + query : ''}`)
+  },
+
+  // 成绩排名
+  getRanking: (params?: {
+    schoolYear?: string
+    semester?: string
+    courseId?: number
+    classId?: number
+    gradeId?: number
+    examType?: string
+    orderBy?: string
+  }) => {
+    const searchParams = new URLSearchParams()
+    if (params?.schoolYear) searchParams.append('schoolYear', params.schoolYear)
+    if (params?.semester) searchParams.append('semester', params.semester)
+    if (params?.courseId) searchParams.append('courseId', String(params.courseId))
+    if (params?.classId) searchParams.append('classId', String(params.classId))
+    if (params?.gradeId) searchParams.append('gradeId', String(params.gradeId))
+    if (params?.examType) searchParams.append('examType', params.examType)
+    if (params?.orderBy) searchParams.append('orderBy', params.orderBy)
+    const query = searchParams.toString()
+    return request.get(`/api/scores/ranking${query ? '?' + query : ''}`)
+  },
+
+  // 成绩趋势
+  getTrend: (params?: {
+    schoolYear?: string
+    semester?: string
+    courseId?: number
+    studentId?: number
+    classId?: number
+  }) => {
+    const searchParams = new URLSearchParams()
+    if (params?.schoolYear) searchParams.append('schoolYear', params.schoolYear)
+    if (params?.semester) searchParams.append('semester', params.semester)
+    if (params?.courseId) searchParams.append('courseId', String(params.courseId))
+    if (params?.studentId) searchParams.append('studentId', String(params.studentId))
+    if (params?.classId) searchParams.append('classId', String(params.classId))
+    const query = searchParams.toString()
+    return request.get(`/api/scores/trend${query ? '?' + query : ''}`)
+  },
+
+  // 多维度查询
+  queryScores: (params?: {
+    schoolYear?: string
+    semester?: string
+    courseId?: number
+    studentId?: number
+    classId?: number
+    keyword?: string
+    examType?: string
+    page?: number
+    size?: number
+  }) => {
+    const searchParams = new URLSearchParams()
+    if (params?.schoolYear) searchParams.append('schoolYear', params.schoolYear)
+    if (params?.semester) searchParams.append('semester', params.semester)
+    if (params?.courseId) searchParams.append('courseId', String(params.courseId))
+    if (params?.studentId) searchParams.append('studentId', String(params.studentId))
+    if (params?.classId) searchParams.append('classId', String(params.classId))
+    if (params?.keyword) searchParams.append('keyword', params.keyword)
+    if (params?.examType) searchParams.append('examType', params.examType)
+    if (params?.page) searchParams.append('page', String(params.page))
+    if (params?.size) searchParams.append('size', String(params.size))
+    const query = searchParams.toString()
+    return request.get(`/api/scores/query${query ? '?' + query : ''}`)
+  },
+
+  // 学生成绩单
+  getStudentReport: (studentId: number, params?: { schoolYear?: string; semester?: string }) => {
+    const searchParams = new URLSearchParams()
+    if (params?.schoolYear) searchParams.append('schoolYear', params.schoolYear)
+    if (params?.semester) searchParams.append('semester', params.semester)
+    const query = searchParams.toString()
+    return request.get(`/api/scores/report/${studentId}${query ? '?' + query : ''}`)
   }
 }
