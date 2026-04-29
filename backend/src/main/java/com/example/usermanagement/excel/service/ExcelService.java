@@ -19,8 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ExcelService {
@@ -75,45 +73,11 @@ public class ExcelService {
         EasyExcel.write(response.getOutputStream(), CourseExcelDTO.class).sheet("课程数据").doWrite(data);
     }
 
-    public void exportScores(HttpServletResponse response, String keyword, Long courseId, Long studentId, String examType) throws Exception {
+    public void exportScores(HttpServletResponse response) throws Exception {
         setResponseHeader(response, "成绩列表.xlsx");
-        List<Score> list = filterScores(keyword, courseId, studentId, examType);
+        List<Score> list = scoreDao.findAll();
         List<ScoreExcelDTO> data = convertToScoreDto(list);
         EasyExcel.write(response.getOutputStream(), ScoreExcelDTO.class).sheet("成绩数据").doWrite(data);
-    }
-
-    private List<Score> filterScores(String keyword, Long courseId, Long studentId, String examType) {
-        List<Score> allScores = scoreDao.findAll();
-        return allScores.stream().filter(score -> {
-            // 按课程筛选
-            if (courseId != null && !courseId.equals(score.getCourseId())) {
-                return false;
-            }
-            // 按学生筛选
-            if (studentId != null && !studentId.equals(score.getStudentId())) {
-                return false;
-            }
-            // 按考试类型筛选
-            if (examType != null && !examType.isEmpty() && !examType.equals(score.getExamType())) {
-                return false;
-            }
-            // 按关键字筛选（学生姓名或学号）
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                String lowerKeyword = keyword.toLowerCase().trim();
-                Optional<Student> studentOpt = studentDao.findById(score.getStudentId());
-                if (studentOpt.isPresent()) {
-                    Student student = studentOpt.get();
-                    boolean matchName = student.getName() != null && student.getName().toLowerCase().contains(lowerKeyword);
-                    boolean matchStudentNo = student.getStudentNo() != null && student.getStudentNo().contains(keyword.trim());
-                    if (!matchName && !matchStudentNo) {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            }
-            return true;
-        }).collect(Collectors.toList());
     }
 
     // ==================== 模板下载 ====================

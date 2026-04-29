@@ -35,13 +35,12 @@ request.interceptors.response.use(
 export const authApi = {
   login: (data: LoginForm) => {
     return request.post<ApiResponse<LoginResponse>>('/auth/login', data).then((res) => {
-      const response = res as unknown as ApiResponse<LoginResponse>
-      if (response.code === 200) {
-        const { token, id, username, role } = response.data
+      if (res.code === 200) {
+        const { token, id, username, role } = res.data
         auth.setToken(token)
         auth.setUser({ id, username, role })
       }
-      return response
+      return res
     })
   },
 

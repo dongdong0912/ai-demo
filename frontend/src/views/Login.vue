@@ -25,9 +25,8 @@ const handleLogin = async () => {
     } else {
       ElMessage.error('用户名或密码错误')
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('登录失败', error)
-    ElMessage.error(error?.response?.data?.message || error?.message || '登录失败，请检查网络')
   } finally {
     loading.value = false
   }

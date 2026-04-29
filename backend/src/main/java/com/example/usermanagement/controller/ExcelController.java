@@ -42,20 +42,6 @@ public class ExcelController {
         try { excelService.exportCourses(response); } catch (Exception e) { setErrorResponse(response, "导出课程失败"); }
     }
 
-    @GetMapping("/export/scores")
-    public void exportScores(
-            HttpServletResponse response,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Long courseId,
-            @RequestParam(required = false) Long studentId,
-            @RequestParam(required = false) String examType) {
-        try {
-            excelService.exportScores(response, keyword, courseId, studentId, examType);
-        } catch (Exception e) {
-            setErrorResponse(response, "导出成绩失败");
-        }
-    }
-
     // ==================== 模板下载接口 ====================
 
     @GetMapping("/template/users")

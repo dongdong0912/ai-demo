@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { User, UserInfo, LoginForm, ApiResponse } from '@/types'
+import { ElMessage } from 'element-plus'
+import type { User, UserInfo, LoginForm } from '@/types'
 import { auth } from '@/utils/auth'
 import { authApi } from '@/api/auth'
 import { userApi } from '@/api/user'
@@ -19,20 +20,25 @@ export const useUserStore = defineStore('user', () => {
 
   // Actions
   async function login(form: LoginForm) {
-    const res = await authApi.login(form)
-    if (res.code === 200 && res.data?.token) {
-      token.value = res.data.token
-      userInfo.value = {
-        id: res.data.id,
-        username: res.data.username,
-        role: res.data.role
+    try {
+      const res = await authApi.login(form)
+      if (res.code === 200 && res.data?.token) {
+        token.value = res.data.token
+        userInfo.value = {
+          id: res.data.id,
+          username: res.data.username,
+          role: res.data.role
+        }
+        auth.setToken(res.data.token)
+        auth.setUser(userInfo.value)
+        return true
       }
-      auth.setToken(res.data.token)
-      auth.setUser(userInfo.value)
-      return true
+      ElMessage.error(res.message || '登录失败')
+      return false
+    } catch (error: any) {
+      ElMessage.error(error?.response?.data?.message || error?.message || '登录失败')
+      return false
     }
-    ElMessage.error(res.message || '登录失败')
-    return false
   }
 
   async function logout() {

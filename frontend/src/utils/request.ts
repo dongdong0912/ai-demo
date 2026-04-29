@@ -30,6 +30,14 @@ request.interceptors.response.use(
     return response.data
   },
   (error: AxiosError<{ code?: number; message?: string }>) => {
+    // 确保 loading 状态被关闭
+    const loadingEl = document.querySelector('.el-loading-mask')
+    if (loadingEl) {
+      loadingEl.remove()
+    }
+    document.body.style.overflow = 'auto'
+    document.body.style.position = 'static'
+
     if (error.response) {
       const { status, data } = error.response
 
@@ -51,6 +59,8 @@ request.interceptors.response.use(
         default:
           ElMessage.error(data?.message || '请求失败')
       }
+    } else if (error.code === 'ECONNABORTED') {
+      ElMessage.error('请求超时，请稍后重试')
     } else if (error.request) {
       ElMessage.error('网络连接失败，请检查网络')
     } else {
